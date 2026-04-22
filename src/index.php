@@ -99,10 +99,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'image'            => $image_b64,
                     'controlnet_1'     => 'edge_canny',
                     'controlnet_1_image'=> $image_b64,
-                    'controlnet_1_conditioning_scale' => 0.8,
+                    'controlnet_1_conditioning_scale' => 0.4,
                     'num_inference_steps' => 20,
-                    'guidance_scale'   => 7.5,
-                    'prompt_strength'  => 0.9,
+                    'guidance_scale'   => 6.5,
+                    'prompt_strength'  => 0.85,
                 ]
             ],$REPLICATE_API_KEY
         );
@@ -161,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 
     <header>
-        <h1>Ink<span>Sync</span></h1>
+        <h1>InkSync</h1>
         <p>AI Storyboard Generator — Prototype v0.1</p>
     </header>
 
@@ -188,8 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         accept="image/jpeg, image/png, image/webp"
                         required
                     >
-                    <div class="upload-icon">🎨</div>
-                    <div class="upload-text">Click or drag an image here<br>(JPEG / PNG / WebP · max 5 MB)</div>
+                    <div class="upload-text">Click or drag an image here</div>
                 </div>
                 <img id="image-preview" alt="Uploaded character reference">
             </div>
@@ -205,6 +204,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h2>Generated Panel</h2>
         <img id="result-img" alt="Generated storyboard panel">
     </div>
+    
 
 <script>
     const fileInput   = document.getElementById('character-image');
