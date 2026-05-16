@@ -1,5 +1,5 @@
 <?php
-require "config.php";
+require "backend/config.php";
 
 define('REPLICATE_MODEL', 'sdxl-based/realvisxl-v3-multi-controlnet-lora:90a4a3604cd637cb9f1a2bdae1cfa9ed869362ca028814cdce310a78e27daade');
 
@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $full_prompt = "monochrome professional storyboard art, hand-drawn sketch style, "
                      . $prompt;
 
-        $negative_prompt = "color photo, realistic photo, high detail, blurry, low quality, nsfw, watermark";
+        $negative_prompt = "color photo, realistic photo, high detail, blurry, low quality, extra legs, extra arms, nsfw, watermark";
 
 
         $prediction = post_json(
@@ -99,10 +99,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'image'            => $image_b64,
                     'controlnet_1'     => 'edge_canny',
                     'controlnet_1_image'=> $image_b64,
-                    'controlnet_1_conditioning_scale' => 0.4,
+                    'controlnet_1_conditioning_scale' => 0.5,
                     'num_inference_steps' => 20,
                     'guidance_scale'   => 6.5,
-                    'prompt_strength'  => 0.85,
+                    'prompt_strength'  => 0.75,
                 ]
             ],$REPLICATE_API_KEY
         );
@@ -116,6 +116,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         for ($i = 0; $i < $max_attempts; $i++) {
             sleep(3);
+
+            // polling for answer
 
             $result = get_json($poll_url, $REPLICATE_API_KEY);
             $status = $result['status'];
@@ -157,12 +159,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>InkSync — Storyboard Generator</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
     <header>
-        <h1>InkSync</h1>
-        <p>AI Storyboard Generator — Prototype v0.1</p>
+        <ul>
+            <li><a href="index.php">Home</a></li>
+            <div>
+                <h1>InkSync</h1>
+                <p>AI Storyboard Generator — Prototype v0.2</p>
+            </div>
+            <li><a href="Login">Login</a></li>
+        </ul>
     </header>
 
     <div class="card">
@@ -179,7 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="field">
-                <label>Character Reference Image</label>
+                <label for="input-image">Character Reference Image</label>
                 <div class="upload-zone" id="upload-zone">
                     <input
                         type="file"
@@ -204,7 +213,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h2>Generated Panel</h2>
         <img id="result-img" alt="Generated storyboard panel">
     </div>
-    
+
 
 <script>
     const fileInput   = document.getElementById('character-image');
