@@ -3,7 +3,6 @@
 
 ?>
 
-
 <?php
 $login_message = "";
 
@@ -24,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <?php
-    require "header.php";
+    require "templates/header.php";
 ?>
 
 <form method="POST" action="login.php">
@@ -34,7 +33,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </form>
 <?= $login_message; var_dump($_SESSION['USER'])?>
 
-
-<?php
-    require "footer.php";
-?>

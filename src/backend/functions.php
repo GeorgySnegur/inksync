@@ -4,7 +4,7 @@
 
     $pagetitle = "no pagetitle set";
 
-    require_once "/backend/config.php";
+    require_once "config.php";
 
     if ( ! $DB_NAME ) die ('please create config.php, define $DB_NAME, $DSN, $DB_USER, $DB_PASS there. See config_sample.php');
 
@@ -19,15 +19,15 @@
 
 
 
-    // zwei verschiedene Formatter
-    $day_short = new IntlDateFormatter('de_DE', IntlDateFormatter::SHORT, IntlDateFormatter::SHORT);
-    $day_long = new IntlDateFormatter('de_DE', IntlDateFormatter::SHORT, IntlDateFormatter::SHORT);
-    $day_db = new IntlDateFormatter('de_DE', IntlDateFormatter::SHORT, IntlDateFormatter::SHORT);
+    // // zwei verschiedene Formatter
+    // $day_short = new IntlDateFormatter('de_DE', IntlDateFormatter::SHORT, IntlDateFormatter::SHORT);
+    // $day_long = new IntlDateFormatter('de_DE', IntlDateFormatter::SHORT, IntlDateFormatter::SHORT);
+    // $day_db = new IntlDateFormatter('de_DE', IntlDateFormatter::SHORT, IntlDateFormatter::SHORT);
 
-    // Formatierung nach http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details
-    $day_short->setPattern('d. LLL');
-    $day_long->setPattern('EEEE d. LLLL yyyy');
-    $day_db->setPattern('yyyy-LL-dd');
+    // // Formatierung nach http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details
+    // $day_short->setPattern('d. LLL');
+    // $day_long->setPattern('EEEE d. LLLL yyyy');
+    // $day_db->setPattern('yyyy-LL-dd');
 
 
     function check_login($username, $password) {
