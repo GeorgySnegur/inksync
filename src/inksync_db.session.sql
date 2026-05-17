@@ -6,3 +6,5 @@ CREATE TABLE users (
 );   
 
 select * from users;
+
+DELETE FROM users;
