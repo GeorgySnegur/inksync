@@ -1,5 +1,5 @@
 <?php
-require '../backend/config.php'
+    require __DIR__ . '/../backend/config.php';
 ?>
 
 <!DOCTYPE html>
@@ -19,7 +19,7 @@ require '../backend/config.php'
                 <h1>InkSync</h1>
                 <p>AI Storyboard Generator — Prototype v0.2</p>
             </div>
-            <li><a href="pages/login.php">Login</a></li>
-            <li><a href="pages/register.php">Register</a></li>
+            <li><a href="/pages/login.php">Login</a></li>
+            <li><a href="/pages/register.php">Register</a></li>
         </ul>
     </header>

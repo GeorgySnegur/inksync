@@ -4,7 +4,7 @@
 
     $pagetitle = "no pagetitle set";
 
-    require_once "config.php";
+    require_once __DIR__ . "/config.php";
 
     if ( ! $DB_NAME ) die ('please create config.php, define $DB_NAME, $DSN, $DB_USER, $DB_PASS there. See config_sample.php');
 
@@ -29,17 +29,50 @@
     // $day_long->setPattern('EEEE d. LLLL yyyy');
     // $day_db->setPattern('yyyy-LL-dd');
 
+    // lookup set of common passwords
+    // O(1) lookup instead of O(n)!!!
+    // all words are lowercase
+    $common_passwords = array_flip(
+    array_map('strtolower', file(__DIR__ . '/security/10k_common_passwords.txt'))
+    );
 
-    function check_login($username, $password) {
-        if ($username === 'rezeption' && $password === 'asecret') {
-            return true;
-        }
-        if ($username === 'gast' && $password === 'asecret') {
-            return true;
-        }
-        else {
+    // $common_passwords = file(
+    //     __DIR__ . '/security/10k_common_passwords.txt',
+    //     FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
+    // );
+
+    function validate_password($password) {
+        // Define the password pattern
+        // ^               : Start of string
+        // (?=.*[A-Z])     : At least one uppercase letter
+        // (?=.*[a-z])     : At least one lowercase letter
+        // (?=.*\d)        : At least one digit
+        // (?=.*[@$!%*?&]) : At least one special character
+        // [A-Za-z\d@$!%*?&]{8,} : Password must be at least 8 characters long and only contain allowed characters
+        // $               : End of string
+        $pattern = '/^[A-Za-z\d@$!%*?&]{8,64}$/';
+
+        if (preg_match($pattern, $password)) {
+            if (!isset($common_passwords[strtolower($password)])) {
+                return true;
+                echo " password: " . $password . " is not a common password! ";
+            } else {
+                echo "weak password! ";
+                return false;
+            }
+        } else {
+            echo " password must be 8 - 64 character long! ";
             return false;
         }
     }
+
+
+    // function check_login($username, $password) {
+    //     $stmt = $dbh->prepare("");
+
+    //     else {
+    //         return false;
+    //     }
+    // }
 
 ?>

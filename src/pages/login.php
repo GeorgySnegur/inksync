@@ -1,5 +1,5 @@
 <?php
-    require "functions.php";
+    require_once __DIR__ . "/../backend/functions.php";
 
 ?>
 
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <?php
-    require "templates/header.php";
+    require_once __DIR__ . "/../templates/header.php";
 ?>
 
 <form method="POST" action="login.php">

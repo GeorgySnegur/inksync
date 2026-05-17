@@ -1,5 +1,5 @@
 <?php
-require "backend/config.php";
+require __DIR__ . '/backend/config.php';
 
 define('REPLICATE_MODEL', 'sdxl-based/realvisxl-v3-multi-controlnet-lora:90a4a3604cd637cb9f1a2bdae1cfa9ed869362ca028814cdce310a78e27daade');
 
