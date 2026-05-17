@@ -4,7 +4,6 @@ require_once __DIR__ . '/../backend/functions.php';
 
 $role = $_SESSION['role'];
 
-var_dump($_SESSION['role'] ?? '', $_SESSION['USER'] ?? '');
 ?>
 
 <!DOCTYPE html>

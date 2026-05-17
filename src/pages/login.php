@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: ../index.php");
         exit;
     } else {
-        $login_message = "Login Daten unvollständig";
+        echo "username or password is incorrect";
     }}
 ?>
 
@@ -34,5 +34,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="password" name="password" placeholder="Passwort">
     <button type="submit">Submit</button>
 </form>
-<?= $login_message; var_dump(htmlspecialchars($_SESSION['USER']))?>
+
 

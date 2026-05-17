@@ -3,7 +3,7 @@
 
 session_start();
 
-ini_set('display_errors', true);
+ini_set('display_errors', false);
 
 $pagetitle = "no pagetitle set";
 

@@ -37,13 +37,12 @@
         $output = $stmt->fetch();
         $hash = $output->password;
         $role = $output->role;
-        echo $hash;
 
         if (password_verify($password, $hash)) {
             echo "login successful! ";
             return [true, $role];
         } else {
-            echo "login unsuccessful with password " . $password . " and hash " . $hash;
+            // echo "login unsuccessful with password " . $password . " and hash " . $hash;
             return false;
         }
     }

@@ -2,6 +2,11 @@
 require_once __DIR__ . '/backend/bootstrap.php';
 require_once __DIR__ . '/backend/functions.php';
 
+if ($role === 'guest' || !isset($_SESSION['USER'])) {
+    header("Location: /pages/login.php");
+    exit;
+}
+
 define('REPLICATE_MODEL', 'sdxl-based/realvisxl-v3-multi-controlnet-lora:90a4a3604cd637cb9f1a2bdae1cfa9ed869362ca028814cdce310a78e27daade');
 
 function post_json(string $url, array $data, string $api_key): array {
@@ -198,10 +203,6 @@ require 'templates/header.php';
         <h2>Generated Panel</h2>
         <img id="result-img" alt="Generated storyboard panel">
     </div>
-
-    <?php
-        echo "The user is: " . (htmlspecialchars(($_SESSION['USER']) ?? ' null'));
-    ?>
 
 
 <script>
