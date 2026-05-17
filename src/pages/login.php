@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: ../index.php");
         exit;
     } else {
-        echo "username or password is incorrect";
+        echo "  username or password is incorrect";
     }}
 ?>
 
