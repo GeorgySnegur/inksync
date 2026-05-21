@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         [$success, $role] = $result;
         $_SESSION['USER'] = $user_input;
         $_SESSION['role'] = $role;
-        header("Location: ../index.php");
+        header("Location: /~fhs54132/mmp1/index.php");
         exit;
     } else {
         echo "  username or password is incorrect";

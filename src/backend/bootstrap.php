@@ -20,6 +20,8 @@ try {
     die ("Problem connecting to database $DB_NAME as $DB_USER: " . $e->getMessage() );
 }
 
+define('BASE_URL', isset($_SERVER['HTTPS']) ? 'https://' . $_SERVER['HTTP_HOST'] . '/home/mmp1' : 'http://' . $_SERVER['HTTP_HOST'] . '/home/mmp1');
+
 $role = $_SESSION['role'] ?? 'guest';
 
 // // zwei verschiedene Formatter

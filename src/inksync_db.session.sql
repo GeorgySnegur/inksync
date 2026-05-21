@@ -7,4 +7,22 @@ CREATE TABLE users (
 
 select * from users;
 
+select * from storyboard_panels;
+
 DELETE FROM users;
+
+
+\timing
+
+EXPLAIN ANALYZE 
+SELECT shot_number, prompt, image_url 
+FROM storyboard_panels 
+WHERE project_id = 101 
+ORDER BY shot_number ASC;
+
+
+EXPLAIN ANALYZE 
+SELECT shot_number, prompt, image_url x
+FROM storyboard_panels 
+WHERE project_id = 102 
+ORDER BY shot_number ASC;

@@ -2,8 +2,10 @@
 require_once __DIR__ . '/backend/bootstrap.php';
 require_once __DIR__ . '/backend/functions.php';
 
+
+
 if ($role === 'guest' || !isset($_SESSION['USER'])) {
-    header("Location: /pages/login.php");
+    header("Location: ./pages/login.php");
     exit;
 }
 
@@ -107,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'controlnet_1_image'=> $image_b64,
                     'controlnet_1_conditioning_scale' => 0.5,
                     'num_inference_steps' => 20,
-                    'guidance_scale'   => 6.5,
+                    'guidance_scale'   => 7.5,
                     'prompt_strength'  => 0.75,
                 ]
             ],$REPLICATE_API_KEY
@@ -160,6 +162,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 require 'templates/header.php';
+
+var_dump(BASE_URL, $_SERVER['HTTP_HOST']);
 
 ?>
 
