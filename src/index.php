@@ -161,9 +161,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit; 
 }
 
-require 'templates/header.php';
+// require 'templates/header.php';
 
-var_dump(BASE_URL, $_SERVER['HTTP_HOST']);
+// var_dump(BASE_URL, $_SERVER['HTTP_HOST']);
 
 ?>
 
@@ -230,12 +230,11 @@ var_dump(BASE_URL, $_SERVER['HTTP_HOST']);
     uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragging'));
     uploadZone.addEventListener('drop',      () => uploadZone.classList.remove('dragging'));
 
-
-    const form      = document.getElementById('storyboard-form');
-    const submitBtn = document.getElementById('submit-btn');
-    const status    = document.getElementById('status');
-    const output    = document.getElementById('output');
-    const resultImg = document.getElementById('result-img');
+const form      = document.getElementById('storyboard-form');
+const submitBtn = document.getElementById('submit-btn');
+const status    = document.getElementById('status');
+const output    = document.getElementById('output');
+const resultImg = document.getElementById('result-img');
 
     function showStatus(type, message) {
         status.className = type;
@@ -249,24 +248,24 @@ var_dump(BASE_URL, $_SERVER['HTTP_HOST']);
     }
 
     form.addEventListener('submit', function (e) {
-        e.preventDefault(); 
+    e.preventDefault(); 
 
-        const promptText = document.getElementById('prompt').value.trim();
-        if (promptText.length < 5) {
-            showStatus('error', 'Please enter a longer scene description.');
-            return;
-        }
-        if (!fileInput.files[0]) {
-            showStatus('error', 'Please upload a character reference image.');
-            return;
-        }
+    const promptText = document.getElementById('prompt').value.trim();
+    if (promptText.length < 5) {
+        showStatus('error', 'Please enter a longer scene description.');
+        return;
+    }
+    if (!fileInput.files[0]) {
+        showStatus('error', 'Please upload a character reference image.');
+        return;
+    }
 
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Generating…';
-        output.style.display  = 'none';
-        showStatus('loading', 'Sending request to Replicate… (this takes 10–30 seconds)');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Generating…';
+    output.style.display  = 'none';
+    showStatus('loading', 'Sending request to Replicate… (this takes 10–30 seconds)');
 
-        const formData = new FormData(form);
+    const formData = new FormData(form);
 
         fetch('index.php', {
             method: 'POST',
