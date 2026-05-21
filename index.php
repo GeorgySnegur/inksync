@@ -161,10 +161,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit; 
 }
 
-// require 'templates/header.php';
-
-// var_dump(BASE_URL, $_SERVER['HTTP_HOST']);
-
 ?>
 
 
@@ -210,9 +206,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 <script>
-    const fileInput   = document.getElementById('character-image');
-    const preview     = document.getElementById('image-preview');
-    const uploadZone  = document.getElementById('upload-zone');
+    const fileInput = document.getElementById('character-image');
+    const preview = document.getElementById('image-preview');
+    const uploadZone = document.getElementById('upload-zone');
 
     fileInput.addEventListener('change', function () {
         const file = this.files[0];
@@ -220,7 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         const reader = new FileReader();
         reader.onload = function (e) {
-            preview.src   = e.target.result;
+            preview.src = e.target.result;
             preview.style.display = 'block';
         };
         reader.readAsDataURL(file);
@@ -230,10 +226,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragging'));
     uploadZone.addEventListener('drop',      () => uploadZone.classList.remove('dragging'));
 
-const form      = document.getElementById('storyboard-form');
+const form = document.getElementById('storyboard-form');
 const submitBtn = document.getElementById('submit-btn');
-const status    = document.getElementById('status');
-const output    = document.getElementById('output');
+const status = document.getElementById('status');
+const output = document.getElementById('output');
 const resultImg = document.getElementById('result-img');
 
     function showStatus(type, message) {
@@ -269,7 +265,7 @@ const resultImg = document.getElementById('result-img');
 
         fetch('index.php', {
             method: 'POST',
-            body:   formData
+            body: formData
         })
         .then(function (response) {
             return response.json();
@@ -287,7 +283,7 @@ const resultImg = document.getElementById('result-img');
             showStatus('error', '✗ Network error — is the server running? ' + err.message);
         })
         .finally(function () {
-            submitBtn.disabled    = false;
+            submitBtn.disabled = false;
             submitBtn.textContent = 'Generate Storyboard Panel';
         });
     });

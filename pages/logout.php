@@ -18,6 +18,7 @@ if (isset($_COOKIE[session_name()])) {
 
 session_destroy();
 
+// login
 
 header("Location: /index.php");
 exit;
