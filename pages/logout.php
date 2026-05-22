@@ -1,25 +1,13 @@
 <?php
+require_once __DIR__ . '/../backend/bootstrap.php';
 
-session_start();
-
-
-$_SESSION = array();
-
+$_SESSION = [];
 
 if (isset($_COOKIE[session_name()])) {
-    setcookie(
-        session_name(),
-        '',
-        time() - 42000,
-        '/'
-    );
+    setcookie(session_name(), '', time() - 42000, '/');
 }
-
 
 session_destroy();
 
-// login
-
-header("Location: /index.php");
+header("Location: " . BASE_URL . "/pages/login.php");
 exit;
-?>

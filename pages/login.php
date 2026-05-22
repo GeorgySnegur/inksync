@@ -1,9 +1,7 @@
 <?php
 require_once __DIR__ . '/../backend/bootstrap.php';
 require_once __DIR__ . '/../backend/functions.php';
-?>
 
-<?php
 $login_message = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -14,25 +12,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = check_login($user_input, $pass_input);
 
     if ($result !== false) {
-        // array destructuring: $result is made of -> [true/false, $output->role]
         [$success, $role] = $result;
         $_SESSION['USER'] = $user_input;
         $_SESSION['role'] = $role;
-        header("Location: /~fhs54132/mmp1/index.php");
+        header("Location: " . BASE_URL . "/index.php");
         exit;
     } else {
-        echo "  username or password is incorrect";
-    }}
+        $login_message = "Username or password is incorrect.";
+    }
+}
+
+require_once __DIR__ . "/../templates/header.php";
 ?>
 
-<?php
-    require_once __DIR__ . "/../templates/header.php";
-?>
-
-<form method="POST" action="login.php">
-    <input type="text" name="username" placeholder="Username">
-    <input type="password" name="password" placeholder="Passwort">
-    <button type="submit">Submit</button>
+<form method="POST" action="<?= BASE_URL ?>/pages/login.php">
+    <input type="text"     name="username" placeholder="Username">
+    <input type="password" name="password" placeholder="Password">
+    <button type="submit">Login</button>
 </form>
 
-
+<?= htmlspecialchars($login_message) ?>

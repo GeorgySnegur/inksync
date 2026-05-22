@@ -92,7 +92,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'controlnet_1_conditioning_scale' => 0.5,
                     'num_inference_steps'             => 20,
                     'guidance_scale'                  => 7.5,
-                    'prompt_strength'                 => 0.75,
+                    'prompt_strength'                 => 0.85,
+                    'extra_lora'                      => 
+                    
                 ]
             ],
             $REPLICATE_API_KEY

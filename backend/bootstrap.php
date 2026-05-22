@@ -1,9 +1,8 @@
-
 <?php
 
 session_start();
 
-ini_set('display_errors', false);
+ini_set('display_errors', true);
 
 $pagetitle = "no pagetitle set";
 
@@ -20,11 +19,29 @@ try {
     die ("Problem connecting to database $DB_NAME as $DB_USER: " . $e->getMessage() );
 }
 
-// define('BASE_URL', isset($_SERVER['HTTPS']) ? 'https://' . $_SERVER['HTTP_HOST'] . '/~fhs54132/mmp1' : 'http://' . $_SERVER['HTTP_HOST'] . '/~fhs54132/mmp1');
+//       is https set? (either unset, or is set to 'off', by Apache server for example)
 
-// $constructed_url = '/';
+if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+    $scheme = 'https';
+} else {
+    $scheme = 'http';
+}
 
-// define('BASE_URL', $constructed_url);
+$host = $_SERVER['HTTP_HOST'];
+
+if (str_starts_with($host, 'localhost') || str_starts_with($host, '127.0.0.1')) {
+    $isLocal = true;
+} else {
+    $isLocal = false;
+}
+
+if ($isLocal) {
+    $subpath = '';
+} else { 
+    $subpath = '/~fhs54132/mmp1'; 
+}
+
+define('BASE_URL', $scheme . '://' . $host . $subpath);
 
 $role = $_SESSION['role'] ?? 'guest';
 
