@@ -76,8 +76,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mime        = validate_image($_FILES['character_image']);
         $image_b64   = file_to_base64($_FILES['character_image']['tmp_name'], $mime);
 
-        $full_prompt = "monochrome professional storyboard art, hand-drawn sketch style, " . $prompt;
-        $negative_prompt = "color photo, realistic photo, high detail, blurry, low quality, extra legs, extra arms, nsfw, watermark";
+        $full_prompt = "shot in the style of sksfer, profesional style monochrome sksfer illustration, " . $prompt;
+        $negative_prompt = "NSFW, naked, signature, borders, color worst quality, low quality, 3d";
 
         $prediction = post_json(
             'https://api.replicate.com/v1/predictions',
@@ -88,14 +88,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'negative_prompt'                 => $negative_prompt,
                     'image'                           => $image_b64,
                     'controlnet_1'                    => 'edge_canny',
-                    'controlnet_1_image'              => $image_b64,
-                    'controlnet_1_conditioning_scale' => 0.5,
+                    'controlnet_1_image'              => $image_b64,    
+                    'controlnet_1_conditioning_scale' => 0.1,
                     'num_inference_steps'             => 20,
                     'guidance_scale'                  => 7.5,
                     'prompt_strength'                 => 0.85,
-                    'extra_lora'                      => 
-                    
-                ]
+                    'refine'                          => 'base_image_refiner',
+                    'refine_steps'                    => 20,
+                    'lora_weights'                    => 'https://pbxt.replicate.delivery/3wwmvGfvB4weYkJMAR2JJNMXu7RPtd8Hc5ONP3IP23fioXfGB/trained_model.tar',
+                    'lora_scale'                      => 0.5,
+                    'disable_safety_checker'          => true,
+                ]  
             ],
             $REPLICATE_API_KEY
         );
