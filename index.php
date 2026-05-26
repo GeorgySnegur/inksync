@@ -1,5 +1,8 @@
 <?php
-require_once __DIR__ . '/backend/bootstrap.php';require_once __DIR__ . '/backend/check_login.php';
+require_once __DIR__ . '/backend/bootstrap.php';
+require_once __DIR__ . '/backend/check_login.php';
+require_once __DIR__ . '/backend/prompt.php';
+require_once __DIR__ . '/backend/api.php';
 
 if ($role === 'guest' || !isset($_SESSION['USER'])) {
     header("Location: " . BASE_URL . "/pages/login.php");
@@ -8,65 +11,6 @@ if ($role === 'guest' || !isset($_SESSION['USER'])) {
 
 define('REPLICATE_MODEL', 'sdxl-based/realvisxl-v3-multi-controlnet-lora:90a4a3604cd637cb9f1a2bdae1cfa9ed869362ca028814cdce310a78e27daade');
 
-function post_json(string $url, array $data, string $api_key): array {
-    $options = [
-        'http' => [
-            'method'        => 'POST',
-            'header'        => "Content-Type: application/json\r\n"
-                             . "Authorization: Token $api_key\r\n",
-            'content'       => json_encode($data),
-            'ignore_errors' => true
-        ]
-    ];
-    $context  = stream_context_create($options);
-    $response = file_get_contents($url, false, $context);
-
-    if ($response === false) {
-        throw new Exception("Network error: could not reach Replicate.");
-    }
-
-    $decoded = json_decode($response, true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        throw new Exception("Could not decode API response: " . json_last_error_msg());
-    }
-    return $decoded;
-}
-
-function get_json(string $url, string $api_key): array {
-    $options = [
-        'http' => [
-            'method'        => 'GET',
-            'header'        => "Authorization: Token $api_key\r\n",
-            'ignore_errors' => true
-        ]
-    ];
-    $context  = stream_context_create($options);
-    $response = file_get_contents($url, false, $context);
-    return json_decode($response, true);
-}
-
-function file_to_base64(string $tmp_path, string $mime_type): string {
-    $raw = file_get_contents($tmp_path);
-    return 'data:' . $mime_type . ';base64,' . base64_encode($raw);
-}
-
-function validate_image(array $file): string {
-    $max_bytes = 5 * 1024 * 1024;
-    if ($file['size'] > $max_bytes) {
-        throw new Exception("Image must be under 5 MB.");
-    }
-
-    $finfo   = new finfo(FILEINFO_MIME_TYPE);
-    $mime    = $finfo->file($file['tmp_name']);
-    $allowed = ['image/jpeg', 'image/png', 'image/webp'];
-
-    if (!in_array($mime, $allowed, true)) {
-        throw new Exception("Only JPEG, PNG, or WebP images are allowed.");
-    }
-
-    return $mime;
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json; charset=utf-8');
 
@@ -74,53 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $prompt      = $_POST['prompt'];
         $mime        = validate_image($_FILES['character_image']);
         $image_b64   = file_to_base64($_FILES['character_image']['tmp_name'], $mime);
-
-        $full_prompt = "professional sketch in the style of sksfer, " . $prompt;
-        $negative_prompt = "";
-
-        // naked, missing eyes, bad fingers, bad anatomy, colorful, worst quality, realistic, low quality, photo
-
-        $prediction = post_json(
-            'https://api.replicate.com/v1/predictions',
-            [
-                'version' => REPLICATE_MODEL,
-                'input'   => [
-                    "seed" =>   4771,
-                    "width" => 768,
-                    "height" => 768,
-                    "image" =>    $image_b64,
-                    "controlnet_1_image" => $image_b64,
-                    "controlnet_2_image" => $image_b64,
-                    "prompt" => $full_prompt,
-                    "refine" => "base_image_refiner",
-                    "scheduler" => "DPMSolverMultistep",
-                    "lora_scale" => 1,
-                    "num_outputs" => 1,
-                    "controlnet_1" => "edge_canny",
-                    "controlnet_2" => "lineart",
-                    "controlnet_3" => "none",
-                    "lora_weights" => "https://pbxt.replicate.delivery/3wwmvGfvB4weYkJMAR2JJNMXu7RPtd8Hc5ONP3IP23fioXfGB/trained_model.tar",
-                    "refine_steps" => 10,
-                    "guidance_scale" => 6.5,
-                    "apply_watermark" => false,
-                    "negative_prompt" => $negative_prompt,
-                    "prompt_strength" => 0.75,
-                    "sizing_strategy" => "controlnet_1_image",
-                    "controlnet_1_end" => 1,
-                    "controlnet_2_end" => 1,
-                    "controlnet_3_end" => 1,
-                    "controlnet_1_start" => 0,
-                    "controlnet_2_start" => 0,
-                    "controlnet_3_start" => 0,
-                    "num_inference_steps" => 20,
-                    "controlnet_1_conditioning_scale" => 0.6,  
-                    "controlnet_2_conditioning_scale" => 0.3,
-                    "controlnet_3_conditioning_scale" => 0
-                ]  
-           ],
-            $REPLICATE_API_KEY
-        );
-
+        // here the build_params function in prompt.php is being called 
+        $params = build_params($prompt, $image_b64);
+        $prediction = post_json('https://api.replicate.com/v1/predictions', $params, $REPLICATE_API_KEY);
         $prediction_id = $prediction['id'];
         $poll_url      = 'https://api.replicate.com/v1/predictions/' . $prediction_id;
         $max_attempts  = 30;
@@ -145,7 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         echo json_encode(['success' => true, 'image_url' => $output_url]);
-
     } catch (Exception $e) {
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => $e->getMessage()]);
@@ -166,8 +65,7 @@ require_once __DIR__ . '/templates/header.php';
                 id="prompt"
                 name="prompt"
                 placeholder="e.g. Hero enters a dark warehouse, low angle, dramatic shadows, tense mood"
-                required
-            ></textarea>
+                required></textarea>
         </div>
 
         <div class="field">
@@ -178,8 +76,7 @@ require_once __DIR__ . '/templates/header.php';
                     name="character_image"
                     id="character-image"
                     accept="image/jpeg, image/png, image/webp"
-                    required
-                >
+                    required>
                 <div class="upload-text">Click or drag an image here</div>
             </div>
             <img id="image-preview" alt="Uploaded character reference">
@@ -198,11 +95,11 @@ require_once __DIR__ . '/templates/header.php';
 </div>
 
 <script>
-    const fileInput  = document.getElementById('character-image');
-    const preview    = document.getElementById('image-preview');
+    const fileInput = document.getElementById('character-image');
+    const preview = document.getElementById('image-preview');
     const uploadZone = document.getElementById('upload-zone');
 
-    fileInput.addEventListener('change', function () {
+    fileInput.addEventListener('change', function() {
         const file = this.files[0];
         if (!file) return;
         const reader = new FileReader();
@@ -213,25 +110,25 @@ require_once __DIR__ . '/templates/header.php';
         reader.readAsDataURL(file);
     });
 
-    uploadZone.addEventListener('dragover',  () => uploadZone.classList.add('dragging'));
+    uploadZone.addEventListener('dragover', () => uploadZone.classList.add('dragging'));
     uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragging'));
-    uploadZone.addEventListener('drop',      () => uploadZone.classList.remove('dragging'));
+    uploadZone.addEventListener('drop', () => uploadZone.classList.remove('dragging'));
 
-    const form      = document.getElementById('storyboard-form');
+    const form = document.getElementById('storyboard-form');
     const submitBtn = document.getElementById('submit-btn');
-    const status    = document.getElementById('status');
-    const output    = document.getElementById('output');
+    const status = document.getElementById('status');
+    const output = document.getElementById('output');
     const resultImg = document.getElementById('result-img');
 
     function showStatus(type, message) {
-        status.className    = type;
+        status.className = type;
         status.style.display = 'block';
-        status.innerHTML = type === 'loading'
-            ? '<span class="spinner"></span>' + message
-            : message;
+        status.innerHTML = type === 'loading' ?
+            '<span class="spinner"></span>' + message :
+            message;
     }
 
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', function(e) {
         e.preventDefault();
 
         const promptText = document.getElementById('prompt').value.trim();
@@ -241,7 +138,7 @@ require_once __DIR__ . '/templates/header.php';
         }
         if (!fileInput.files[0]) {
             showStatus('error', 'Please upload a character reference image.');
-       showStatus('error', 'Please enter a longer scene description.');
+            showStatus('error', 'Please enter a longer scene description.');
             return;
         }
         if (!fileInput.files[0]) {
@@ -249,17 +146,20 @@ require_once __DIR__ . '/templates/header.php';
             return;
         }
 
-        submitBtn.disabled    = true;
+        submitBtn.disabled = true;
         submitBtn.textContent = 'Generating…';
-        output.style.display  = 'none';
+        output.style.display = 'none';
         showStatus('loading', 'Sending request to Replicate… (this takes 10–30 seconds)');
 
-        fetch('<?= BASE_URL ?>/index.php', { method: 'POST', body: new FormData(form) })
-            .then(r  => r.json())
+        fetch('<?= BASE_URL ?>/index.php', {
+                method: 'POST',
+                body: new FormData(form)
+            })
+            .then(r => r.json())
             .then(data => {
                 if (data.success) {
                     showStatus('info', '✓ Panel generated successfully!');
-                    resultImg.src        = data.image_url;
+                    resultImg.src = data.image_url;
                     output.style.display = 'block';
                 } else {
                     showStatus('error', '✗ Error: ' + data.error);
@@ -267,11 +167,12 @@ require_once __DIR__ . '/templates/header.php';
             })
             .catch(err => showStatus('error', '✗ Network error: ' + err.message))
             .finally(() => {
-                submitBtn.disabled    = false;
+                submitBtn.disabled = false;
                 submitBtn.textContent = 'Generate Storyboard Panel';
             });
     });
 </script>
 
 </body>
+
 </html>
