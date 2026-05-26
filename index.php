@@ -1,6 +1,5 @@
 <?php
-require_once __DIR__ . '/backend/bootstrap.php';
-require_once __DIR__ . '/backend/functions.php';
+require_once __DIR__ . '/backend/bootstrap.php';require_once __DIR__ . '/backend/check_login.php';
 
 if ($role === 'guest' || !isset($_SESSION['USER'])) {
     header("Location: " . BASE_URL . "/pages/login.php");
@@ -76,30 +75,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mime        = validate_image($_FILES['character_image']);
         $image_b64   = file_to_base64($_FILES['character_image']['tmp_name'], $mime);
 
-        $full_prompt = "shot in the style of sksfer, profesional style monochrome sksfer illustration, " . $prompt;
-        $negative_prompt = "NSFW, naked, signature, borders, color worst quality, low quality, 3d";
+        $full_prompt = "professional sketch in the style of sksfer, " . $prompt;
+        $negative_prompt = "";
+
+        // naked, missing eyes, bad fingers, bad anatomy, colorful, worst quality, realistic, low quality, photo
 
         $prediction = post_json(
             'https://api.replicate.com/v1/predictions',
             [
                 'version' => REPLICATE_MODEL,
                 'input'   => [
-                    'prompt'                          => $full_prompt,
-                    'negative_prompt'                 => $negative_prompt,
-                    'image'                           => $image_b64,
-                    'controlnet_1'                    => 'edge_canny',
-                    'controlnet_1_image'              => $image_b64,    
-                    'controlnet_1_conditioning_scale' => 0.1,
-                    'num_inference_steps'             => 20,
-                    'guidance_scale'                  => 7.5,
-                    'prompt_strength'                 => 0.85,
-                    'refine'                          => 'base_image_refiner',
-                    'refine_steps'                    => 20,
-                    'lora_weights'                    => 'https://pbxt.replicate.delivery/3wwmvGfvB4weYkJMAR2JJNMXu7RPtd8Hc5ONP3IP23fioXfGB/trained_model.tar',
-                    'lora_scale'                      => 0.5,
-                    'disable_safety_checker'          => true,
+                    "seed" =>   4771,
+                    "width" => 768,
+                    "height" => 768,
+                    "image" =>    $image_b64,
+                    "controlnet_1_image" => $image_b64,
+                    "controlnet_2_image" => $image_b64,
+                    "prompt" => $full_prompt,
+                    "refine" => "base_image_refiner",
+                    "scheduler" => "DPMSolverMultistep",
+                    "lora_scale" => 1,
+                    "num_outputs" => 1,
+                    "controlnet_1" => "edge_canny",
+                    "controlnet_2" => "lineart",
+                    "controlnet_3" => "none",
+                    "lora_weights" => "https://pbxt.replicate.delivery/3wwmvGfvB4weYkJMAR2JJNMXu7RPtd8Hc5ONP3IP23fioXfGB/trained_model.tar",
+                    "refine_steps" => 10,
+                    "guidance_scale" => 6.5,
+                    "apply_watermark" => false,
+                    "negative_prompt" => $negative_prompt,
+                    "prompt_strength" => 0.75,
+                    "sizing_strategy" => "controlnet_1_image",
+                    "controlnet_1_end" => 1,
+                    "controlnet_2_end" => 1,
+                    "controlnet_3_end" => 1,
+                    "controlnet_1_start" => 0,
+                    "controlnet_2_start" => 0,
+                    "controlnet_3_start" => 0,
+                    "num_inference_steps" => 20,
+                    "controlnet_1_conditioning_scale" => 0.6,  
+                    "controlnet_2_conditioning_scale" => 0.3,
+                    "controlnet_3_conditioning_scale" => 0
                 ]  
-            ],
+           ],
             $REPLICATE_API_KEY
         );
 
@@ -114,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $status = $result['status'];
 
             if ($status === 'succeeded') {
-                $output_url = $result['output'][1] ?? null;
+                $output_url = $result['output'][2] ?? null;
                 break;
             }
             if ($status === 'failed' || $status === 'canceled') {
@@ -223,6 +241,11 @@ require_once __DIR__ . '/templates/header.php';
         }
         if (!fileInput.files[0]) {
             showStatus('error', 'Please upload a character reference image.');
+       showStatus('error', 'Please enter a longer scene description.');
+            return;
+        }
+        if (!fileInput.files[0]) {
+            showStatus('error', 'Please upload a character photo image.');
             return;
         }
 

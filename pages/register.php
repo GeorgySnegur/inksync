@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../backend/bootstrap.php';
-require_once __DIR__ . '/../backend/functions.php';
+require_once __DIR__ . '/../backend/check_login.php';
 
 $register_message = "";
 
