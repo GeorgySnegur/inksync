@@ -28,10 +28,10 @@ function build_params(string $prompt, string $image_b64): array
             "controlnet_3" => "none",
             "lora_weights" => "https://pbxt.replicate.delivery/3wwmvGfvB4weYkJMAR2JJNMXu7RPtd8Hc5ONP3IP23fioXfGB/trained_model.tar",
             "refine_steps" => 10,
-            "guidance_scale" => 4.5,
+            "guidance_scale" => 3,
             "apply_watermark" => false,
             "negative_prompt" => $negative_prompt,
-            "prompt_strength" => 0.9,
+            "prompt_strength" => 0.95,
             "sizing_strategy" => "controlnet_1_image",
             "controlnet_1_end" => 1,
             "controlnet_2_end" => 1,
@@ -40,8 +40,8 @@ function build_params(string $prompt, string $image_b64): array
             "controlnet_2_start" => 0,
             "controlnet_3_start" => 0,
             "num_inference_steps" => 20,
-            "controlnet_1_conditioning_scale" => 0.2,
-            "controlnet_2_conditioning_scale" => 0.2,
+            "controlnet_1_conditioning_scale" => 0.1,
+            "controlnet_2_conditioning_scale" => 0.1,
             "controlnet_3_conditioning_scale" => 0
         ]
     ];

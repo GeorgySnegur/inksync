@@ -30,7 +30,7 @@
     }
 
 
-    function check_login($username, $password) {
+    function check_login(string $username, string $password) {
         global $dbh;
         $stmt = $dbh->prepare("SELECT password, role FROM users WHERE username = ?");
         $stmt->execute([$username]);

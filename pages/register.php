@@ -2,6 +2,11 @@
 require_once __DIR__ . '/../backend/bootstrap.php';
 require_once __DIR__ . '/../backend/check_login.php';
 
+if ($_SESSION['role'] !== 'admin') {
+    header('Location:' . BASE_URL . '/index.php');
+    exit;
+}
+
 $register_message = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username']) && isset($_POST['password'])) {
