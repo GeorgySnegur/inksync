@@ -1,0 +1,5 @@
+# InkSync — backend/.htaccess
+# Place this file as /backend/.htaccess
+# Blocks ALL direct browser access to backend/ files
+
+Require all denied

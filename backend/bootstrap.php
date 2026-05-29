@@ -2,7 +2,7 @@
 
 session_start();
 
-ini_set('display_errors', false);
+ini_set('display_errors', true);
 
 $pagetitle = "no pagetitle set";
 
@@ -36,7 +36,7 @@ if (str_starts_with($host, 'localhost') || str_starts_with($host, '127.0.0.1')) 
 }
 
 if ($isLocal) {
-    $subpath = '';
+    $subpath = '/inksync/';
 } else { 
     $subpath = '/~fhs54132/mmp1'; 
 }

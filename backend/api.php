@@ -41,12 +41,16 @@ function get_json(string $url, string $api_key): array
     return json_decode($response, true);
 }
 
+// https://www.php.net/manual/en/function.base64-encode.php
+// converting image to base64 (binary string) is necessary to 
+
 function file_to_base64(string $tmp_path, string $mime_type): string
 {
     $raw = file_get_contents($tmp_path);
     return 'data:' . $mime_type . ';base64,' . base64_encode($raw);
 }
 
+// $_FILES['character_image'] is an array with name, type, tmp_name etc
 function validate_image(array $file): string
 {
     $max_bytes = 5 * 1024 * 1024;
@@ -54,10 +58,13 @@ function validate_image(array $file): string
         throw new Exception("Image must be under 5 MB.");
     }
 
+    // finfo(FILEINFO_MIME_TYPE) checks real file data, it location of tmp file 'tmp_name' 
+    
     $finfo   = new finfo(FILEINFO_MIME_TYPE);
     $mime    = $finfo->file($file['tmp_name']);
     $allowed = ['image/jpeg', 'image/png', 'image/webp'];
 
+    // https://www.pentesttesting.com/unrestricted-file-upload-in-wordpress/
     if (!in_array($mime, $allowed, true)) {
         throw new Exception("Only JPEG, PNG, or WebP images are allowed.");
     }
