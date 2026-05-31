@@ -1,17 +1,18 @@
 
 :root {
-    --ink:       #1a1a1a;
-    --paper:     #f5f2eb;
-    --cream:     #ede9df;
-    --accent:    #c0392b;
-    --muted:     #7a7060;
-    --border:    #ccc5b0;
-    --radius:    4px;
-    --font-head: 'Georgia', 'Times New Roman', serif;
-    --font-body: 'Courier New', 'Courier', monospace;
+--ink:#1a1a1a;
+--paper:#f5f2eb;
+--cream:#ede9df;
+--accent:#c0392b;
+--muted:#7a7060;
+--border:#ccc5b0;
+--radius:4px;
+--font-head:'Georgia', 'Times New Roman', serif;
+--font-body:'Courier New', 'Courier', monospace;
 }
 
-
+/* with box-sizing: border-box; padding is included inside a container, not within */
+/* margin: 0 and padding: 0 removed browser default paddings */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
@@ -63,6 +64,58 @@ header p {
     color: var(--muted);
     font-size: 0.85rem;
     letter-spacing: 0.05em;
+}
+
+.main-section{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2vw;
+    width: 100%;
+    height: 100%;
+    gap: 8vh;
+}
+
+.storyboard{
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+
+    width: 100%;
+
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    box-shadow: 4px 4px 0 var(--cream);
+    gap: 20px;
+}
+
+.panel{
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    border: 1px solid black;
+}
+
+.panel-image{
+    box-sizing: border-box;
+    border: 1px solid black;
+
+    aspect-ratio: 16 / 9;
+}
+
+.panel-text{
+    box-sizing: border-box;
+    border: 1px solid black;
+    width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.panel-text p{
+    font-size: small;
 }
 
 .card {
@@ -155,6 +208,9 @@ button[type="submit"] {
     cursor: pointer;
     transition: background 0.2s, transform 0.1s;
 }
+
+    /* https://www.codegenes.net/blog/hover-and-active-only-when-not-disabled/ */
+
 button[type="submit"]:hover  { background: #333; }
 button[type="submit"]:active { transform: scale(0.99); }
 button[type="submit"]:disabled {
@@ -217,3 +273,17 @@ button[type="submit"]:disabled {
     text-decoration: underline;
 }
 
+@media (max-width: 1080px) {
+    .storyboard{
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr 1fr 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    .storyboard{
+        grid-template-columns: 1fr ;
+        grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    }
+
+}

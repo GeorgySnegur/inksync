@@ -11,6 +11,7 @@ if ($role === 'guest' || !isset($_SESSION['USER'])) {
 
 define('REPLICATE_MODEL', 'sdxl-based/realvisxl-v3-multi-controlnet-lora:90a4a3604cd637cb9f1a2bdae1cfa9ed869362ca028814cdce310a78e27daade');
 
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json; charset=utf-8');
 
@@ -20,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // tmp_name is just a temporary name php gives to the uploaded file ('character_image') e.g /tmp/'tmp_name'. 
         $image_b64   = file_to_base64($_FILES['character_image']['tmp_name'], $mime);
-        
+
         // here the build_params function in prompt.php is being called 
         $params = build_params($prompt, $image_b64);
         $prediction = post_json('https://api.replicate.com/v1/predictions', $params, $REPLICATE_API_KEY);
@@ -50,48 +51,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['success' => true, 'image_url' => $output_url]);
     } catch (Exception $e) {
         http_response_code(400);
+            // frontend and backend talk in json, so need to encode erorr message
         echo json_encode(['success' => false, 'error' => $e->getMessage()]);
     }
 
     exit;
 }
 
+
+
 require_once __DIR__ . '/templates/header.php';
 ?>
+<section class="main-section">
 
-<div class="card">
-    <!-- multipart/form-data: encodes <form> into several MIME messages. needed if form contains <input type="file" -->
-    <form id="storyboard-form" enctype="multipart/form-data">
-
-        <div class="field">
-            <label for="prompt">Scene Description</label>
-            <textarea
-                id="prompt"
-                name="prompt"
-                placeholder="(Input in english) e.g. Hero enters a dark warehouse, low angle, dramatic shadows, tense mood"
-                required></textarea>
-        </div>
-
-        <div class="field">
-            <label for="character-image">Character Reference Image</label>
-            <div class="upload-zone" id="upload-zone">
-                <input
-                    type="file"
-                    name="character_image"
-                    id="character-image"
-                    accept="image/jpeg, image/png, image/webp"
-                    required>
-                <div class="upload-text">Click or drag an image here</div>
+    <div class="card">
+        <!-- multipart/form-data: encodes <form> into several MIME messages. needed if form contains <input type="file" -->
+        <form id="storyboard-form" enctype="multipart/form-data">
+    
+            <div class="field">
+                <label for="prompt">Scene Description</label>
+                <textarea
+                    id="prompt"
+                    name="prompt"
+                    placeholder="(Input in english) e.g. Hero enters a dark warehouse, low angle, dramatic shadows, tense mood"
+                    required></textarea>
             </div>
-            <img id="image-preview" alt="Uploaded character reference">
+    
+            <div class="field">
+                <label for="character-image">Scene Reference Image</label>
+                <div class="upload-zone" id="upload-zone">
+                    <input
+                        type="file"
+                        name="character_image"
+                        id="character-image"
+                        accept="image/jpeg, image/png, image/webp"
+                        required>
+                    <div class="upload-text">Click or drag an image here</div>
+                </div>
+                <img id="image-preview" alt="Uploaded character reference">
+            </div>
+    
+            <button type="submit" id="submit-btn">Generate Storyboard Panel</button>
+    
+        </form>
+    
+        <div id="status"></div>
+    </div>
+
+    <div class="storyboard">
+        <div class="panel" id="panel-1">
+            <div class="panel-image"></div>
+            <div class="panel-text"><p>Besipiel Besipiel Besipiel Besipiel Besipiel Besipiel Besipiel Besipiel Besipiel Besipiel</p></div>
         </div>
+        <div class="panel" id="panel-2"></div>
+        <div class="panel" id="panel-3"></div>
+        <div class="panel" id="panel-4"></div>
+        <div class="panel" id="panel-5"></div>
+        <div class="panel" id="panel-6"></div>
+        <div class="panel" id="panel-7"></div>
+        <div class="panel" id="panel-8"></div>
+    </div>
 
-        <button type="submit" id="submit-btn">Generate Storyboard Panel</button>
-
-    </form>
-
-    <div id="status"></div>
-</div>
+</section>
 
 <div id="output">
     <h2>Generated Panel</h2>
@@ -103,14 +124,19 @@ require_once __DIR__ . '/templates/header.php';
     const preview = document.getElementById('image-preview');
     const uploadZone = document.getElementById('upload-zone');
 
+    // file upload zone
     fileInput.addEventListener('change', function() {
         const file = this.files[0];
         if (!file) return;
+
+        // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL -> uploded file (e.target(FileReader)) into getElementById('image-preview')
         const reader = new FileReader();
         reader.onload = e => {
             preview.src = e.target.result;
             preview.style.display = 'block';
         };
+
+        // converts image into a base64 string 
         reader.readAsDataURL(file);
     });
 
@@ -141,7 +167,7 @@ require_once __DIR__ . '/templates/header.php';
             return;
         }
         if (!fileInput.files[0]) {
-            showStatus('error', 'Please upload a character reference image.');
+            showStatus('error', 'Please upload a photo reference.');
             showStatus('error', 'Please enter a longer scene description.');
             return;
         }

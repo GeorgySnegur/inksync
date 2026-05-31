@@ -42,7 +42,7 @@ function get_json(string $url, string $api_key): array
 }
 
 // https://www.php.net/manual/en/function.base64-encode.php
-// converting image to base64 (binary string) is necessary to 
+// converting image to base64 (binary string) is necessary to prove wether
 
 function file_to_base64(string $tmp_path, string $mime_type): string
 {
@@ -64,7 +64,7 @@ function validate_image(array $file): string
     $mime    = $finfo->file($file['tmp_name']);
     $allowed = ['image/jpeg', 'image/png', 'image/webp'];
 
-    // https://www.pentesttesting.com/unrestricted-file-upload-in-wordpress/
+    // https://www.php.net/manual/es/function.finfo-file.php
     if (!in_array($mime, $allowed, true)) {
         throw new Exception("Only JPEG, PNG, or WebP images are allowed.");
     }
