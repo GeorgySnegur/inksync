@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $prompt      = $_POST['prompt'];
         $mime        = validate_image($_FILES['character_image']);
 
-        resize_to_4x3($_FILES['tmp_name']);
+        resize_to_4x3($_FILES['character_image']['tmp_name'], $mime);
 
         // tmp_name is just a temporary name php gives to the uploaded file ('character_image') e.g /tmp/'tmp_name'.
         $image_b64   = file_to_base64($_FILES['character_image']['tmp_name'], $mime);
@@ -136,6 +136,12 @@ require_once __DIR__ . '/templates/header.php';
         const file = this.files[0]
         if (!file) return
 
+        // warm up the cold model, for fast image generation
+        window.addEventListener('load', () => {
+        fetch('<?= BASE_URL ?>/warmup.php')
+        });
+
+
         // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL -> uploded file (e.target(FileReader)) into getElementById('image-preview')
         const reader = new FileReader()
         reader.onload = e => {
@@ -168,9 +174,6 @@ require_once __DIR__ . '/templates/header.php';
     // debugger;
 
 
-    window.addEventListener('load', () => {
-        fetch('<?= BASE_URL ?>/warmup.php')
-    });
 
     storyboardForm.addEventListener('submit', function(e) {
         e.preventDefault()

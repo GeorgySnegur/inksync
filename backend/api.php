@@ -73,7 +73,7 @@ function validate_image(array $file): string
 }
 
 
-function resize_to_4x3(string $image_temp){
+function resize_to_4x3(string $image_temp, string $mime): string{
     // https://stackoverflow.com/a/31656257
 
     $max_width  = 800;
@@ -82,8 +82,13 @@ function resize_to_4x3(string $image_temp){
     $image_size_info = getimagesize($image_temp); //gets original image dimensions
     $image_width     = $image_size_info[0];
     $image_height    = $image_size_info[1];
-    $image_res       = imagecreatefromjpeg($image_temp);
 
+    // check which image format input image is
+    $image_res = match($mime) {
+        'image/jpeg' => imagecreatefromjpeg($image_temp),
+        'image/png'  => imagecreatefrompng($image_temp),
+        'image/webp' => imagecreatefromwebp($image_temp),
+    };
     $new_width  = $image_height * $max_width / $max_height;
     $new_height = $image_width  * $max_height / $max_width; //figures out ths largest  4:3 rectangle that fits inside the original
 
@@ -102,6 +107,9 @@ function resize_to_4x3(string $image_temp){
     }
 
     imagecopyresampled($canvas, $image_res, 0, 0, $cut_x, $cut_y, $max_width, $max_height, $new_width_canvas, $new_height_canvas);
-    imagejpeg($canvas, sys_get_temp_dir() . '/resized_01', 85);
-    imagedestroy($image_res);
+    imagejpeg($canvas, $image_temp, 85); //saves to disk
+    return $image_temp;
 }
+
+
+?>
