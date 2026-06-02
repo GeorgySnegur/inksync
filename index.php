@@ -48,7 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($output_url === null) {
+            post_json('https://api.replicate.com/v1/predictions/' . $prediction_id . '/cancel',[],$REPLICATE_API_KEY);
             throw new Exception("Generation timed out. Try again in a moment.");
+
         }
 
         echo json_encode(['success' => true, 'image_url' => $output_url]);
@@ -102,13 +104,15 @@ require_once __DIR__ . '/templates/header.php';
 
     <div class="storyboard">
         <div class="panel" id="panel1">
-            <button type="button" class="pick-btn" id="pick-btn1">Pick Image</button>
-            <img src="" alt="" class="panel-image" id="panel-image1">
+            <button type="button" class="pick-btn" id="pick-btn1">Insert Image</button>
+
+            <!-- crossOrigina rule exists, so that malicious webites couldnt draw a "cross-origin" image on their site and steal private images -->
+            <img src="" alt="" class="panel-image" id="panel-image1" crossOrigin="anonymous">
             <div class="panel-text" id="panel-text1"><p></p></div>
         </div>
         <div class="panel" id="panel2">
             <button type="button" class="pick-btn" id="pick-btn2">Pick Image</button>
-            <img src="" alt="" class="panel-image" id="panel-image2">
+            <img src="" alt="" class="panel-image" id="panel-image2" crossOrigin="anonymous">
             <div class="panel-text" id="panel-text1"><p></p></div>
         </div>
         <!-- <div class="panel" id="panel-3"></div>
@@ -117,6 +121,8 @@ require_once __DIR__ . '/templates/header.php';
         <div class="panel" id="panel-6"></div>
         <div class="panel" id="panel-7"></div>
         <div class="panel" id="panel-8"></div> -->
+
+        <button type="button" id="export-btn">Export Storyboard Page</button>
     </div>
 
 </section>
@@ -126,6 +132,8 @@ require_once __DIR__ . '/templates/header.php';
     <img id="result-img" alt="Generated storyboard panel">
 </div>
 
+
+<script src="<?= BASE_URL ?>/scripts/node_modules/html2canvas/dist/html2canvas.min.js" defer></script>
 <script>
     const fileInput = document.getElementById('character-image')
     const preview = document.getElementById('image-preview')
@@ -173,10 +181,54 @@ require_once __DIR__ . '/templates/header.php';
 
     // debugger;
 
+    const storyboard = document.querySelector('.storyboard')
+    const exportBtn = document.getElementById('export-btn')
+    exportBtn.addEventListener('click', () =>{
+
+        // load html2canvas
+        html2canvas(storyboard, {
+        allowTaint: true,
+        useCORS: true,
+        }).then(function (canvas) {
+        // it will return a canvas element
+        const image = canvas.toDataURL("image/png", 0.5)
+        const img = document.createElement('img')
+        img.src = image
+        storyboard.appendChild(img)
+        })
+        .catch((e) => {
+        console.log(e)
+        })
+    })
+
+
+    const image_url = '<?= BASE_URL ?>/test_img.png';
+    const promptText = 'test test test';
+
+        const panels = document.querySelectorAll('.panel')
+        panels.forEach(panel => {
+            const pickBtn = panel.querySelector('.pick-btn')
+            console.log(`Panel ---->${panel}`)
+
+            pickBtn.style.display = 'block'
+            const imagePanel = panel.querySelector('.panel-image')
+            const panelText = panel.querySelector('p')
+            console.log(`imgePanel ---->${imagePanel}`)
+
+            pickBtn.addEventListener('click', (e) => {
+
+                console.log(`prompt Text---->${pickBtn}`)
+                pickBtn.textContent = 'Image Inserted'
+                imagePanel.src = image_url
+                panelText.innerText = promptText
+            })
+        })
+
+
 
 
     storyboardForm.addEventListener('submit', function(e) {
-        e.preventDefault()
+        e.preventDefault() //prevents browser from reloading
 
         // .value accesses string value, .trim() creates new string, sanitizes input and removes spaces
         const promptText = document.getElementById('prompt').value.trim()
@@ -226,7 +278,7 @@ require_once __DIR__ . '/templates/header.php';
                         pickBtn.addEventListener('click', (e) => {
 
                             console.log(`prompt Text---->${pickBtn}`)
-                            pickBtn.textContent = 'Image Picked'
+                            pickBtn.textContent = 'Image Inserted'
                             imagePanel.src = data.image_url
                             panelText.innerText = promptText
                         })
