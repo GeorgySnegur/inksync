@@ -142,7 +142,6 @@ header p {
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    border: 1px solid black;
 }
 
 .panel-image{
@@ -154,11 +153,17 @@ header p {
 }
 
 .panel-text{
+    overflow: hidden;
+    overflow-y: auto;
     box-sizing: border-box;
     border: 1px solid black;
     width: 100%;
     height: auto;
     padding: 10px;
+}
+
+.panel-text span{
+    font-size: small;
 }
 
 .storyboard-meta div {
