@@ -18,6 +18,7 @@ define('REPLICATE_MODEL', 'sdxl-based/realvisxl-v3-multi-controlnet-lora:90a4a36
         // instantly cancel request https://replicate.com/docs/reference/http#predictions.cancel
         $prediction_id = $prediction['id'];
         post_json('https://api.replicate.com/v1/predictions/' . $prediction_id . '/cancel',[],$REPLICATE_API_KEY);
+        echo json_encode(['warmed' => true]);
 
     } catch (Exception $e) {
         echo 'ERROR WARMUP';

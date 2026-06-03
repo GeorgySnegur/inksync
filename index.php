@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($output_url === null) {
             post_json('https://api.replicate.com/v1/predictions/' . $prediction_id . '/cancel',[],$REPLICATE_API_KEY);
-            throw new Exception("Generation timed out. Try again in a moment.");
+            throw new Exception("We are experiencing high traffic. Try again in a moment.");
 
         }
 
@@ -96,10 +96,15 @@ require_once __DIR__ . '/templates/header.php';
             </div>
 
             <button type="submit" id="submit-btn">Generate Storyboard Panel</button>
-
         </form>
 
         <div id="status"></div>
+
+        <div id="output">
+            <h2>Generated Panel</h2>
+            <img id="result-img" alt="Generated storyboard panel">
+        </div>
+
     </div>
 
     <div class="storyboard-section">
@@ -114,14 +119,41 @@ require_once __DIR__ . '/templates/header.php';
             <div class="panel" id="panel2">
                 <button type="button" class="pick-btn" id="pick-btn2">Insert Image</button>
                 <img alt="" class="panel-image" id="panel-image2" crossOrigin="anonymous">
-                <div class="panel-text" id="panel-text1"><p></p></div>
+                <div class="panel-text" id="panel-text2"><p></p></div>
             </div>
-            <!-- <div class="panel" id="panel-3"></div>
-            <div class="panel" id="panel-4"></div>
-            <div class="panel" id="panel-5"></div>
-            <div class="panel" id="panel-6"></div>
-            <div class="panel" id="panel-7"></div>
-            <div class="panel" id="panel-8"></div> -->
+            <div class="panel" id="panel3">
+                <button type="button" class="pick-btn" id="pick-btn3">Insert Image</button>
+                <img alt="" class="panel-image" id="panel-image3" crossOrigin="anonymous">
+                <div class="panel-text" id="panel-text3"><p></p></div>
+            </div>
+            <div class="panel" id="panel4">
+                <button type="button" class="pick-btn" id="pick-btn4">Insert Image</button>
+                <img alt="" class="panel-image" id="panel-image4" crossOrigin="anonymous">
+                <div class="panel-text" id="panel-text4"><p></p></div>
+            </div>
+            <div class="panel" id="panel5">
+                <button type="button" class="pick-btn" id="pick-btn5">Insert Image</button>
+                <img alt="" class="panel-image" id="panel-image5" crossOrigin="anonymous">
+                <div class="panel-text" id="panel-text5"><p></p></div>
+            </div>
+            <div class="panel" id="panel6">
+                <button type="button" class="pick-btn" id="pick-btn6">Insert Image</button>
+                <img alt="" class="panel-image" id="panel-image6" crossOrigin="anonymous">
+                <div class="panel-text" id="panel-text6"><p></p></div>
+            </div>
+            <div class="panel" id="panel7">
+                <button type="button" class="pick-btn" id="pick-btn7">Insert Image</button>
+                <img alt="" class="panel-image" id="panel-image7" crossOrigin="anonymous">
+                <div class="panel-text" id="panel-text7"><p></p></div>
+            </div>
+            <div class="panel" id="panel8">
+                <button type="button" class="pick-btn" id="pick-btn8">Insert Image</button>
+                <img alt="" class="panel-image" id="panel-image8" crossOrigin="anonymous">
+                <div class="panel-text" id="panel-text8"><p></p></div>
+            </div>
+
+
+
         </div>
         <button type="button" id="export-btn">Export Storyboard Page</button>
     </div>
@@ -129,10 +161,6 @@ require_once __DIR__ . '/templates/header.php';
 
 </section>
 
-<div id="output">
-    <h2>Generated Panel</h2>
-    <img id="result-img" alt="Generated storyboard panel">
-</div>
 
 
 <script src="<?= BASE_URL ?>/scripts/node_modules/html2canvas/dist/html2canvas.min.js" defer></script>
@@ -146,20 +174,17 @@ require_once __DIR__ . '/templates/header.php';
         const file = this.files[0]
         if (!file) return
 
-        // warm up the cold model, for fast image generation
-        window.addEventListener('load', () => {
-        fetch('<?= BASE_URL ?>/warmup.php')
-        });
-
-
         // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL -> uploded file (e.target(FileReader)) into getElementById('image-preview')
         const reader = new FileReader()
         reader.onload = e => {
-            preview.src = e.target.result
+            // SECONDly  onload loads base64 string into preview
+            preview.src = e.target.result   // e.target is the FileReader()
             preview.style.display = 'block'
-        };
 
-        // converts image into a base64 string
+            // warm up the cold model, for fast image generation
+            fetch('<?= BASE_URL ?>/warmup.php')
+        };
+        // FIRSTLY, this converts image into a base64 string and displays in <img>. (intead of loading image into databaase)
         reader.readAsDataURL(file)
     });
 
@@ -176,27 +201,13 @@ require_once __DIR__ . '/templates/header.php';
     function showStatus(type, message) {
         status.className = type
         status.style.display = 'block'
-        status.innerHTML = type === 'loading' ?
-            '<span class="spinner"></span>' + message :
-            message
+
+        if (type === 'loading') {
+            status.innerHTML = '<span class="spinner"></span>' + message
+        } else {
+            status.innerHTML = message
+        }
     }
-
-    // debugger;
-    const image_url = '<?= BASE_URL ?>/test_img.png'
-    const promptText = 'test test test'
-    const panels = document.querySelectorAll('.panel')
-
-    panels.forEach(panel => {
-        const pickBtn = panel.querySelector('.pick-btn')
-        pickBtn.style.display = 'block'
-        const imagePanel = panel.querySelector('.panel-image')
-        const panelText = panel.querySelector('p')
-        pickBtn.addEventListener('click', (e) => {
-            pickBtn.textContent = 'Image Inserted'
-            imagePanel.src = image_url
-            panelText.innerText = promptText
-        })
-    })
 
     const storyboard = document.querySelector('.storyboard')
     const storyboardSection = document.querySelector('.storyboard-section')
@@ -218,21 +229,23 @@ require_once __DIR__ . '/templates/header.php';
             pickBtns.forEach(pickBtn=> {
                 pickBtn.style.display = 'none'
             });
-            exportBtn.innerText = 'Back to Edit Mode'
             sectionExportReady = true
 
             // https://dev.to/bibekkakati/take-screenshot-of-html-element-using-javascript-13b7
             // load html2canvas
+            exportBtn.innerHTML = '<span class="spinner"></span>'
             html2canvas(storyboard, {
             allowTaint: true,
             useCORS: true,
             }).then(function (canvas) {
+
             // https://stackoverflow.com/questions/61861295/downloading-a-tainted-canvas-as-a-png
             // it will return a canvas element
             const downloadLink = document.createElement('a')
             downloadLink.href = canvas.toDataURL("image/png", 0.5)
             downloadLink.download = 'storyboard_panel.png'
             downloadLink.click()
+            exportBtn.innerText = 'Back to Edit Mode'
             })
             .catch((e) => {
             console.log(e)
@@ -253,11 +266,16 @@ require_once __DIR__ . '/templates/header.php';
             showStatus('error', 'Please upload a photo reference.')
             return
         }
+        // https://www.w3schools.com/jsref/jsref_tolowercase.asp
+        if (promptText.toLowerCase().includes('<script>') || promptText.toUpperCase().includes('DROP TABLE')) {
+            showStatus('error', 'nuh-uh, nicht so einfach Freundchen☝️ ;) ')
+            return
+        }
 
         submitBtn.disabled = true
         submitBtn.textContent = 'Generating…'
         output.style.display = 'none'
-        showStatus('loading', 'Sending request to Replicate… (this takes 10–30 seconds)')
+        showStatus('loading', 'Sending request to Replicate… (this usually takes 10–30 seconds)')
 
         // sends a promise object
         fetch('<?= BASE_URL ?>/index.php', {
@@ -276,16 +294,11 @@ require_once __DIR__ . '/templates/header.php';
                     const panels = document.querySelectorAll('.panel')
                     panels.forEach(panel => {
                         const pickBtn = panel.querySelector('.pick-btn')
-                        console.log(`Panel ---->${panel}`)
-
                         pickBtn.style.display = 'block'
                         const imagePanel = panel.querySelector('.panel-image')
                         const panelText = panel.querySelector('p')
-                        console.log(`imgePanel ---->${imagePanel}`)
 
                         pickBtn.addEventListener('click', (e) => {
-
-                            console.log(`prompt Text---->${pickBtn}`)
                             pickBtn.textContent = 'Image Inserted'
                             imagePanel.src = data.image_url
                             panelText.innerText = promptText
