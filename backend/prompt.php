@@ -6,7 +6,7 @@ require_once __DIR__ . '/bootstrap.php';
 function build_params(string $prompt, string $image_b64): array
 {
     $full_prompt = "professional black/white sketch in the style of sksfer, clean lineart, " . $prompt;
-    $negative_prompt = "ai artifacts";
+    $negative_prompt = "ai artifacts, lazy eye, bad anatomy";
     // naked, missing eyes, bad fingers, bad anatomy, colorful, worst quality, realistic, low quality, photo
 
     return [
@@ -31,7 +31,7 @@ function build_params(string $prompt, string $image_b64): array
             "guidance_scale" => 3,
             "apply_watermark" => false,
             "negative_prompt" => $negative_prompt,
-            "prompt_strength" => 0.9,
+            "prompt_strength" => 0.73,
             "sizing_strategy" => "controlnet_1_image",
             "controlnet_1_end" => 1,
             "controlnet_2_end" => 1,

@@ -85,7 +85,7 @@ function resize_to_4x3(string $image_temp, string $mime): string{
 
     // check which image format input image is
     $image_res = match($mime) {
-        'image/jpeg' => imagecreatefromjpeg($image_temp),
+        'image/jpeg' => imagecreatefromjpeg($image_temp), //this functions belongs to GD extension in php.ini
         'image/png'  => imagecreatefrompng($image_temp),
         'image/webp' => imagecreatefromwebp($image_temp),
     };

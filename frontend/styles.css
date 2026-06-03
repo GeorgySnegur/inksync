@@ -78,6 +78,16 @@ header p {
 
 /* _______STORYBOARD___________ */
 
+.storyboard-section{
+    width: 100%;
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    box-shadow: 4px 4px 0 var(--cream);
+    gap: 20px;
+}
+
 .storyboard{
 
     display: grid;
@@ -195,6 +205,21 @@ textarea:focus {
     margin-top: 12px;
     border: 1px solid var(--border);
     border-radius: var(--radius);
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    background: var(--ink);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
 }
 
 #submit-btn {

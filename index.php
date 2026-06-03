@@ -102,28 +102,30 @@ require_once __DIR__ . '/templates/header.php';
         <div id="status"></div>
     </div>
 
-    <div class="storyboard">
-        <div class="panel" id="panel1">
-            <button type="button" class="pick-btn" id="pick-btn1">Insert Image</button>
+    <div class="storyboard-section">
+        <div class="storyboard">
+            <div class="panel" id="panel1">
+                <button type="button" class="pick-btn" id="pick-btn1">Insert Image</button>
 
-            <!-- crossOrigina rule exists, so that malicious webites couldnt draw a "cross-origin" image on their site and steal private images -->
-            <img src="" alt="" class="panel-image" id="panel-image1" crossOrigin="anonymous">
-            <div class="panel-text" id="panel-text1"><p></p></div>
+                <!-- crossOrigina rule exists, so that malicious webites couldnt draw a "cross-origin" image on their site and steal private images -->
+                <img alt="" class="panel-image" id="panel-image1" crossOrigin="anonymous">
+                <div class="panel-text" id="panel-text1"><p></p></div>
+            </div>
+            <div class="panel" id="panel2">
+                <button type="button" class="pick-btn" id="pick-btn2">Insert Image</button>
+                <img alt="" class="panel-image" id="panel-image2" crossOrigin="anonymous">
+                <div class="panel-text" id="panel-text1"><p></p></div>
+            </div>
+            <!-- <div class="panel" id="panel-3"></div>
+            <div class="panel" id="panel-4"></div>
+            <div class="panel" id="panel-5"></div>
+            <div class="panel" id="panel-6"></div>
+            <div class="panel" id="panel-7"></div>
+            <div class="panel" id="panel-8"></div> -->
         </div>
-        <div class="panel" id="panel2">
-            <button type="button" class="pick-btn" id="pick-btn2">Pick Image</button>
-            <img src="" alt="" class="panel-image" id="panel-image2" crossOrigin="anonymous">
-            <div class="panel-text" id="panel-text1"><p></p></div>
-        </div>
-        <!-- <div class="panel" id="panel-3"></div>
-        <div class="panel" id="panel-4"></div>
-        <div class="panel" id="panel-5"></div>
-        <div class="panel" id="panel-6"></div>
-        <div class="panel" id="panel-7"></div>
-        <div class="panel" id="panel-8"></div> -->
-
         <button type="button" id="export-btn">Export Storyboard Page</button>
     </div>
+
 
 </section>
 
@@ -180,52 +182,63 @@ require_once __DIR__ . '/templates/header.php';
     }
 
     // debugger;
+    const image_url = '<?= BASE_URL ?>/test_img.png'
+    const promptText = 'test test test'
+    const panels = document.querySelectorAll('.panel')
 
-    const storyboard = document.querySelector('.storyboard')
-    const exportBtn = document.getElementById('export-btn')
-    exportBtn.addEventListener('click', () =>{
-
-        // load html2canvas
-        html2canvas(storyboard, {
-        allowTaint: true,
-        useCORS: true,
-        }).then(function (canvas) {
-        // it will return a canvas element
-        const image = canvas.toDataURL("image/png", 0.5)
-        const img = document.createElement('img')
-        img.src = image
-        storyboard.appendChild(img)
-        })
-        .catch((e) => {
-        console.log(e)
+    panels.forEach(panel => {
+        const pickBtn = panel.querySelector('.pick-btn')
+        pickBtn.style.display = 'block'
+        const imagePanel = panel.querySelector('.panel-image')
+        const panelText = panel.querySelector('p')
+        pickBtn.addEventListener('click', (e) => {
+            pickBtn.textContent = 'Image Inserted'
+            imagePanel.src = image_url
+            panelText.innerText = promptText
         })
     })
 
+    const storyboard = document.querySelector('.storyboard')
+    const storyboardSection = document.querySelector('.storyboard-section')
+    const exportBtn = document.getElementById('export-btn')
+    let sectionExportReady = false
 
-    const image_url = '<?= BASE_URL ?>/test_img.png';
-    const promptText = 'test test test';
 
-        const panels = document.querySelectorAll('.panel')
-        panels.forEach(panel => {
-            const pickBtn = panel.querySelector('.pick-btn')
-            console.log(`Panel ---->${panel}`)
+    exportBtn.addEventListener('click', () =>{
 
-            pickBtn.style.display = 'block'
-            const imagePanel = panel.querySelector('.panel-image')
-            const panelText = panel.querySelector('p')
-            console.log(`imgePanel ---->${imagePanel}`)
+        if (sectionExportReady === true) {
+            exportBtn.innerText = 'Export Storyboard Page'
+            const pickBtns = document.querySelectorAll('.pick-btn')
+                pickBtns.forEach(pickBtn=> {
+                    pickBtn.style.display = 'block'
+                });
+            sectionExportReady = false
+        } else {
+            const pickBtns = document.querySelectorAll('.pick-btn')
+            pickBtns.forEach(pickBtn=> {
+                pickBtn.style.display = 'none'
+            });
+            exportBtn.innerText = 'Back to Edit Mode'
+            sectionExportReady = true
 
-            pickBtn.addEventListener('click', (e) => {
-
-                console.log(`prompt Text---->${pickBtn}`)
-                pickBtn.textContent = 'Image Inserted'
-                imagePanel.src = image_url
-                panelText.innerText = promptText
+            // https://dev.to/bibekkakati/take-screenshot-of-html-element-using-javascript-13b7
+            // load html2canvas
+            html2canvas(storyboard, {
+            allowTaint: true,
+            useCORS: true,
+            }).then(function (canvas) {
+            // https://stackoverflow.com/questions/61861295/downloading-a-tainted-canvas-as-a-png
+            // it will return a canvas element
+            const downloadLink = document.createElement('a')
+            downloadLink.href = canvas.toDataURL("image/png", 0.5)
+            downloadLink.download = 'storyboard_panel.png'
+            downloadLink.click()
             })
-        })
-
-
-
+            .catch((e) => {
+            console.log(e)
+            })
+        }
+    })
 
     storyboardForm.addEventListener('submit', function(e) {
         e.preventDefault() //prevents browser from reloading
@@ -233,11 +246,6 @@ require_once __DIR__ . '/templates/header.php';
         // .value accesses string value, .trim() creates new string, sanitizes input and removes spaces
         const promptText = document.getElementById('prompt').value.trim()
         if (promptText.length < 20) {
-            showStatus('error', 'Please enter a longer scene description.')
-            return
-        }
-        if (!fileInput.files[0]) {
-            showStatus('error', 'Please upload a photo reference.')
             showStatus('error', 'Please enter a longer scene description.')
             return
         }
