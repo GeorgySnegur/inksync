@@ -31,7 +31,7 @@ function build_params(string $prompt, string $image_b64): array
             "guidance_scale" => 3,
             "apply_watermark" => false,
             "negative_prompt" => $negative_prompt,
-            "prompt_strength" => 0.95,
+            "prompt_strength" => 0.85,
             "sizing_strategy" => "controlnet_1_image",
             "controlnet_1_end" => 1,
             "controlnet_2_end" => 1,

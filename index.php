@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $prediction = post_json('https://api.replicate.com/v1/predictions', $params, $REPLICATE_API_KEY);
         $prediction_id = $prediction['id'];
         $poll_url      = 'https://api.replicate.com/v1/predictions/' . $prediction_id;
-        $max_attempts  = 30;
+        $max_attempts  = 60;
         $output_url    = null;
 
 
@@ -107,58 +107,67 @@ require_once __DIR__ . '/templates/header.php';
 
     </div>
 
+    
     <div class="storyboard-section">
+
+        <div class="storyboard-header">
+            <div class="storyboard-team">Team Name:</div>
+            <div class="storyboard-meta">
+                <div>PRODUCT: <textarea name="product-textarea" id="product-textarea"></textarea></div>
+                <div>TITLE: <textarea name="title-textarea" id="title-textarea"></textarea> </div>
+                <div>SHEET: <textarea name="sheet-textarea" id="sheet-textarea"></textarea> </div>
+                <div>SEQUENCE: <textarea name="sequence-textare" id="sequence-textare"></textarea></div>
+            </div>
+        </div>
+
         <div class="storyboard">
             <div class="panel" id="panel1">
                 <button type="button" class="pick-btn" id="pick-btn1">Insert Image</button>
 
                 <!-- crossOrigina rule exists, so that malicious webites couldnt draw a "cross-origin" image on their site and steal private images -->
                 <img alt="" class="panel-image" id="panel-image1" crossOrigin="anonymous">
-                <div class="panel-text" id="panel-text1"><p></p></div>
+                <div class="panel-text" id="panel-text1"><textarea></textarea></div>
             </div>
             <div class="panel" id="panel2">
                 <button type="button" class="pick-btn" id="pick-btn2">Insert Image</button>
                 <img alt="" class="panel-image" id="panel-image2" crossOrigin="anonymous">
-                <div class="panel-text" id="panel-text2"><p></p></div>
+                <div class="panel-text" id="panel-text2"><textarea></textarea></div>
             </div>
             <div class="panel" id="panel3">
                 <button type="button" class="pick-btn" id="pick-btn3">Insert Image</button>
                 <img alt="" class="panel-image" id="panel-image3" crossOrigin="anonymous">
-                <div class="panel-text" id="panel-text3"><p></p></div>
+                <div class="panel-text" id="panel-text3"><textarea></textarea></div>
             </div>
             <div class="panel" id="panel4">
                 <button type="button" class="pick-btn" id="pick-btn4">Insert Image</button>
                 <img alt="" class="panel-image" id="panel-image4" crossOrigin="anonymous">
-                <div class="panel-text" id="panel-text4"><p></p></div>
+                <div class="panel-text" id="panel-text4"><textarea></textarea></div>
             </div>
             <div class="panel" id="panel5">
                 <button type="button" class="pick-btn" id="pick-btn5">Insert Image</button>
                 <img alt="" class="panel-image" id="panel-image5" crossOrigin="anonymous">
-                <div class="panel-text" id="panel-text5"><p></p></div>
+                <div class="panel-text" id="panel-text5"><textarea></textarea></div>
             </div>
             <div class="panel" id="panel6">
                 <button type="button" class="pick-btn" id="pick-btn6">Insert Image</button>
                 <img alt="" class="panel-image" id="panel-image6" crossOrigin="anonymous">
-                <div class="panel-text" id="panel-text6"><p></p></div>
+                <div class="panel-text" id="panel-text6"><textarea></textarea></div>
             </div>
             <div class="panel" id="panel7">
                 <button type="button" class="pick-btn" id="pick-btn7">Insert Image</button>
                 <img alt="" class="panel-image" id="panel-image7" crossOrigin="anonymous">
-                <div class="panel-text" id="panel-text7"><p></p></div>
+                <div class="panel-text" id="panel-text7"><textarea></textarea></div>
             </div>
             <div class="panel" id="panel8">
                 <button type="button" class="pick-btn" id="pick-btn8">Insert Image</button>
                 <img alt="" class="panel-image" id="panel-image8" crossOrigin="anonymous">
-                <div class="panel-text" id="panel-text8"><p></p></div>
+                <div class="panel-text" id="panel-text8"><textarea></textarea></div>
             </div>
-
-
-
         </div>
+
         <button type="button" id="export-btn">Export Storyboard Page</button>
+
     </div>
-
-
 </section>
 
 
@@ -233,8 +242,8 @@ require_once __DIR__ . '/templates/header.php';
 
             // https://dev.to/bibekkakati/take-screenshot-of-html-element-using-javascript-13b7
             // load html2canvas
-            exportBtn.innerHTML = '<span class="spinner"></span>'
-            html2canvas(storyboard, {
+            exportBtn.style.display = 'none'
+            html2canvas(storyboardSection, {
             allowTaint: true,
             useCORS: true,
             }).then(function (canvas) {
@@ -245,6 +254,7 @@ require_once __DIR__ . '/templates/header.php';
             downloadLink.href = canvas.toDataURL("image/png", 0.5)
             downloadLink.download = 'storyboard_panel.png'
             downloadLink.click()
+            exportBtn.style.display = 'block'
             exportBtn.innerText = 'Back to Edit Mode'
             })
             .catch((e) => {
@@ -296,7 +306,7 @@ require_once __DIR__ . '/templates/header.php';
                         const pickBtn = panel.querySelector('.pick-btn')
                         pickBtn.style.display = 'block'
                         const imagePanel = panel.querySelector('.panel-image')
-                        const panelText = panel.querySelector('p')
+                        const panelText = panel.querySelector('textarea')
 
                         pickBtn.addEventListener('click', (e) => {
                             pickBtn.textContent = 'Image Inserted'
