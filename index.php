@@ -282,9 +282,10 @@ require_once __DIR__ . '/templates/header.php';
             })
         })
 
-        fetch('<?= BASE_URL ?>/backend/save_panels.php')
-
-
+        fetch('<?= BASE_URL ?>/backend/save_panels.php', {
+            method: 'POST',
+            body: JSON.stringify({project_id: PROJECT_ID, panels})   //JSON.stringify converts a JavaScript array/object into JSON string 
+        })
     })
 
 
