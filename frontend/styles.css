@@ -138,6 +138,23 @@ header p {
     gap: 20px;
 }
 
+.buttons-card{
+    display: flex;
+    flex-direction: row;
+    margin: 0 auto;
+    padding-top: 20px;
+    gap: 20px;
+    width: 100%;
+    max-width: 800px;
+}
+
+#save-btn{
+    background-color:rgb(81, 196, 70);
+}
+#export-btn{
+    background-color: rgb(84, 99, 205);
+}
+
 .panel{
     display: flex;
     flex-direction: column;

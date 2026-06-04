@@ -1,0 +1,158 @@
+
+
+___________________GOALS:___________________
+
+
+
+######## MUST HAVE ###########
+
+just one form and a storyboard grid on the side
+
+
+- user limit:
+
+user id, timestamp, gen amount
+helper function vor api request laufen lassen
+
+
+- implement a n:m relationship in Database (e.g users and projects)
+
+
+
+
+######## GOOD TO HAVE ########
+
+
+- fast photo upload
+
+for user testing/presentation
+fast smartphone photo upload to inksync
+
+- Partials 
+
+php in index.php sends request to Replicate, locks FPM Worker and session for 30 sec, 
+recieves response and proceeds
+
+
+index.php uses only templates/partials_form 
+
+- several forms for image submission (partials) !
+are several requests to replicate possible?
+
+
+- images parsen mit imagemagick?
+
+
+- JS function um die dropdowns/slider einstellungen in ein string propmt einzufügen
+
+
+
+	####USER TESTING, PEN TESTING:######
+
+
+*1 see ./docs/user_testing.docx
+
+- user uploads bad images 
+
+(faint sketch, 
+transparent png with sketch, 
+nsfw, character image contains several people
+aspect ratio mismaatch)
+
+- user males bad prompt 
+
+(Abstract, Non-Visual concepts,
+Non-English Input,
+Shot number or dialogue in the prompt,
+shot type etc in the prompt (SLIDERS HANDLE THAT))
+overguidence (deep fired effect)
+
+
+
+
+		IMPROVE OUTPUT QUALITY
+- add LoRa ✓
+
+- Character constistency
+
+- Prüfen ob mehrere User gleichzeitig Storyboards erstellen können
+
+- Verschiedene use-cases für das Referenzbild: smartphone Foto, sketch, 3D snapshot 
+
+
+	SECURITY
+
+- User Limit	!!!!!!!!!!!!!!!
+
+admin panel zeigt wie viel jeweiliger user generiert hat
+
+- Tool lock
+
+
+
+
+____________NOTES TO FUNCTIONALITY___________
+
+
+WEAKNESS:
+
+sleep(3) function during polling occupies the php thread for the duration, which is acceptable for a uni project, but would be problematic with more than 5~ users
+
+
+
+__________DATA FLOW of index.php___________
+
+
+STEP 1 ______
+
+When the JS frontend submits the form via fetch(), PHP sees a POST request. The first thing it does is declare: "my response will be JSON" — so the browser knows how to parse what comes back.
+
+STEP 2 _____
+validate_image() — is the file safe?
+
+$_FILES is PHP's way of accessing uploaded files. The function does two checks:
+Size: if the file is over 5 MB, throw an exception — stops junk uploads early.
+MIME type: uses finfo, a PHP built-in that reads the actual file bytes (not just the filename extension, which users can fake). Only JPEG, PNG, and WebP are allowed. Returns the MIME type string (e.g. "image/jpeg") if valid.
+
+
+STEP 3_______ — file_to_base64() — convert image to a string
+
+PHP saves uploaded files to a temporary path on the server. This function reads those raw bytes with file_get_contents(), then encodes them as base64 and prepends the data URI prefix:
+
+Why? Replicate's API expects everything in one JSON body. You can't send a binary file inside JSON directly — base64 turns the binary into a plain text string that fits inside a JSON field. No separate file upload endpoint needed.
+
+
+STEP 4 ______
+
+$prediction = post_json(
+    'https://api.replicate.com/v1/predictions',
+    [ 'version' => ..., 'input' => [ ... ] ],
+    $REPLICATE_API_KEY
+);
+This function manually builds an HTTP POST request using PHP's stream_context_create():
+
+Sets the method to POST
+Adds two headers: Content-Type: application/json and Authorization: Token <key>
+Encodes the PHP array as a JSON string with json_encode()
+Sends it with file_get_contents() and decodes the JSON response back into a PHP array 
+
+$decoded = json_decode($response //(file_get_contents($url, false, $context))//, true);
+
+---> PREDICTION OBJECT
+$prediction_id = $prediction['id'];
+
+
+Replicate does not generate the image immediately. It queues the job and returns a prediction object with an id and status "starting". The image isn't ready yet.
+
+
+STEP 5______
+
+get_json() is the same idea as post_json() but a simple GET — just reads a URL with the auth header.
+The loop runs up to 30 times, waiting 3 seconds between each check (max 90 seconds). Each time it asks Replicate: "is this job done yet?" Replicate answers with a status: starting → processing → succeeded or failed.
+When it's succeeded, $result['output'] is an array of image URLs. [1] grabs the second one — the refiner output (higher quality). [0] would be the base model output.
+
+
+STEP 6_________
+
+
+

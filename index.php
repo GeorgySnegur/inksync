@@ -166,7 +166,10 @@ require_once __DIR__ . '/templates/header.php';
             </div>
         </div>
 
-        <button type="button" id="export-btn">Export Storyboard Page</button>
+        <div class="buttons-card">
+            <button type="button" id="export-btn">Export Storyboard Page</button>
+            <button type="button" id="save-btn">Save Panel</button>
+        </div>
 
     </div>
 </section>
@@ -174,6 +177,7 @@ require_once __DIR__ . '/templates/header.php';
 
 
 <script src="<?= BASE_URL ?>/scripts/node_modules/html2canvas/dist/html2canvas.min.js" defer></script>
+
 <script>
     const fileInput = document.getElementById('character-image')
     const preview = document.getElementById('image-preview')
@@ -224,7 +228,6 @@ require_once __DIR__ . '/templates/header.php';
     const exportBtn = document.getElementById('export-btn')
     let sectionExportReady = false
 
-
     exportBtn.addEventListener('click', () =>{
 
         if (sectionExportReady === true) {
@@ -263,6 +266,28 @@ require_once __DIR__ . '/templates/header.php';
             })
         }
     })
+
+    const PROJECT_ID = 1
+    const saveBtn = document.getElementById('save-btn')
+
+    saveBtn.addEventListener('click', () => {
+        
+        const panels = []
+
+        storyboard.querySelectorAll('.panel').forEach((panel, index) =>{
+            panels.push({
+                shot_number: 1 + index,
+                image_url: panel.querySelector('.panel-image').src || null,
+                prompt: panel.querySelector('span').innerText.trim()
+            })
+        })
+
+        fetch('<?= BASE_URL ?>/backend/save_panels.php')
+
+
+    })
+
+
 
     storyboardForm.addEventListener('submit', function(e) {
         e.preventDefault() //prevents browser from reloading
