@@ -21,7 +21,7 @@ function build_params(string $prompt, string $image_b64): array
             "prompt" => $full_prompt,
             "refine" => "base_image_refiner",
             "scheduler" => "DPMSolverMultistep",
-            "lora_scale" => 0.6,
+            "lora_scale" => 0.7,
             "num_outputs" => 1,
             "controlnet_1" => "edge_canny",
             "controlnet_2" => "lineart",

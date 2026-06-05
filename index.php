@@ -12,6 +12,7 @@ if ($role === 'guest' || !isset($_SESSION['USER'])) {
 define('REPLICATE_MODEL', 'sdxl-based/realvisxl-v3-multi-controlnet-lora:90a4a3604cd637cb9f1a2bdae1cfa9ed869362ca028814cdce310a78e27daade');
 
 
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json; charset=utf-8');
 
@@ -179,6 +180,7 @@ require_once __DIR__ . '/templates/header.php';
 <script src="<?= BASE_URL ?>/scripts/node_modules/html2canvas/dist/html2canvas.min.js" defer></script>
 
 <script>
+    
     const fileInput = document.getElementById('character-image')
     const preview = document.getElementById('image-preview')
     const uploadZone = document.getElementById('upload-zone')
@@ -284,8 +286,12 @@ require_once __DIR__ . '/templates/header.php';
 
         fetch('<?= BASE_URL ?>/backend/save_panels.php', {
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({project_id: PROJECT_ID, panels})   //JSON.stringify converts a JavaScript array/object into JSON string 
         })
+        .then(r => r.json())
+        .then(data => console.log(data))
+        .catch(err => console.log(err))
     })
 
 

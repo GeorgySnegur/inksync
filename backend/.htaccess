@@ -3,3 +3,7 @@
 # Blocks ALL direct browser access to backend/ files
 
 Require all denied
+
+<Files "save_panels.php">
+    Require all granted
+</Files>

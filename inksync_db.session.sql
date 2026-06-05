@@ -9,7 +9,6 @@ select * from users;
 
 select * from storyboard_panels;
 
-DELETE FROM users;
 
 
 \timing
@@ -26,3 +25,9 @@ SELECT shot_number, prompt, image_url x
 FROM storyboard_panels 
 WHERE project_id = 102 
 ORDER BY shot_number ASC;
+
+INSERT INTO storyboard_panels 
+(project_id, user_id, shot_number, prompt, image_url)
+VALUES (101, 1, 1, 'dafvdafv', 'adfvadfv')
+ON CONFLICT (project_id, shot_number)
+DO UPDATE SET prompt = EXCLUDED.prompt, image_url = EXCLUDED.image_url

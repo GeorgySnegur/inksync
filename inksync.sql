@@ -27,6 +27,10 @@ CREATE TABLE storyboard_panels (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- says that no storyboard_panel can have identical project_id and shot_number
+ALTER TABLE storyboard_panels 
+ADD CONSTRAINT unique_project_shot UNIQUE (project_id, shot_number);
+
 -- CREATE INDEX idx_project_panels_sequence ON storyboard_panels(project_id, shot_number);
 
 INSERT INTO users (user_id, username, password, role) VALUES 

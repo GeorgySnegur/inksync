@@ -21,10 +21,12 @@ $role = $_SESSION['role'] ?? 'guest';
             <li><a href="<?= BASE_URL ?>/pages/register.php">Admin Panel</a></li>
         <?php endif; ?>
 
-        <li><a href="<?= BASE_URL ?>/index.php">Home</a></li>
+        <?php if ($role !== 'guest' && $role !== null): ?>
+            <li><a href="<?= BASE_URL ?>/pages/projects.php">Projects (<?= htmlspecialchars($_SESSION['USER']) ?>)</a></li>
+        <?php endif; ?>
 
         <div>
-            <h1>InkSync</h1>
+            <a href="<?= BASE_URL ?>/index.php"><h1>InkSync</h1></a>
             <p>AI Storyboard Generator — Prototype v0.2</p>
         </div>
 
