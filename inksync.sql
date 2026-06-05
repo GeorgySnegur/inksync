@@ -13,14 +13,14 @@ CREATE TABLE users (
 
 CREATE TABLE projects(
     project_id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(user_id),
+    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
     name VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE storyboard_panels (
     panel_id SERIAL PRIMARY KEY,
     project_id INT REFERENCES projects(project_id) ON DELETE CASCADE,
-    user_id INT REFERENCES users(user_id),
+    user_id INT REFERENCES users(user_id) ON DELETE SET NULL,
     shot_number INT NOT NULL,
     prompt TEXT NOT NULL,
     image_url TEXT,

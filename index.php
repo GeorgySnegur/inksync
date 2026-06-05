@@ -128,42 +128,50 @@ require_once __DIR__ . '/templates/header.php';
 
                 <!-- crossOrigina rule exists, so that malicious webites couldnt draw a "cross-origin" image on their site and steal private images -->
                 <img alt="" class="panel-image" id="panel-image1" crossOrigin="anonymous">
-                <div class="panel-text" id="panel-text1"><span contenteditable="true" aria-label="Panel description"></span></div> <!-- https://github.com/WordPress/gutenberg/issues/5981 -->
+                <div class="panel-text" id="panel-text1"><span contenteditable="true" aria-label="Panel description">
+                </span></div> <!-- https://github.com/WordPress/gutenberg/issues/5981 -->
             </div>
             <div class="panel" id="panel2">
                 <button type="button" class="pick-btn" id="pick-btn2">Insert Image</button>
                 <img alt="" class="panel-image" id="panel-image2" crossOrigin="anonymous">
-                <div class="panel-text" id="panel-text2"><span contenteditable="true" aria-label="Panel description"></span></div>
+                <div class="panel-text" id="panel-text2"><span contenteditable="true" aria-label="Panel description">
+                </span></div>
             </div>
             <div class="panel" id="panel3">
                 <button type="button" class="pick-btn" id="pick-btn3">Insert Image</button>
                 <img alt="" class="panel-image" id="panel-image3" crossOrigin="anonymous">
-                <div class="panel-text" id="panel-text3"><span contenteditable="true" aria-label="Panel description"></span></div>
+                <div class="panel-text" id="panel-text3"><span contenteditable="true" aria-label="Panel description">
+                </span></div>
             </div>
             <div class="panel" id="panel4">
                 <button type="button" class="pick-btn" id="pick-btn4">Insert Image</button>
                 <img alt="" class="panel-image" id="panel-image4" crossOrigin="anonymous">
-                <div class="panel-text" id="panel-text4"><span contenteditable="true" aria-label="Panel description"></span></div>
+                <div class="panel-text" id="panel-text4"><span contenteditable="true" aria-label="Panel description">
+                </span></div>
             </div>
             <div class="panel" id="panel5">
                 <button type="button" class="pick-btn" id="pick-btn5">Insert Image</button>
                 <img alt="" class="panel-image" id="panel-image5" crossOrigin="anonymous">
-                <div class="panel-text" id="panel-text5"><span contenteditable="true" aria-label="Panel description"></span></div>
+                <div class="panel-text" id="panel-text5"><span contenteditable="true" aria-label="Panel description">
+                </span></div>
             </div>
             <div class="panel" id="panel6">
                 <button type="button" class="pick-btn" id="pick-btn6">Insert Image</button>
                 <img alt="" class="panel-image" id="panel-image6" crossOrigin="anonymous">
-                <div class="panel-text" id="panel-text6"><span contenteditable="true" aria-label="Panel description"></span></div>
+                <div class="panel-text" id="panel-text6"><span contenteditable="true" aria-label="Panel description">
+                </span></div>
             </div>
             <div class="panel" id="panel7">
                 <button type="button" class="pick-btn" id="pick-btn7">Insert Image</button>
                 <img alt="" class="panel-image" id="panel-image7" crossOrigin="anonymous">
-                <div class="panel-text" id="panel-text7"><span contenteditable="true" aria-label="Panel description"></span></div>
+                <div class="panel-text" id="panel-text7"><span contenteditable="true" aria-label="Panel description">
+                </span></div>
             </div>
             <div class="panel" id="panel8">
                 <button type="button" class="pick-btn" id="pick-btn8">Insert Image</button>
                 <img alt="" class="panel-image" id="panel-image8" crossOrigin="anonymous">
-                <div class="panel-text" id="panel-text8"><span contenteditable="true" aria-label="Panel description"></span></div>
+                <div class="panel-text" id="panel-text8"><span contenteditable="true" aria-label="Panel description">
+                </span></div>
             </div>
         </div>
 
@@ -269,7 +277,7 @@ require_once __DIR__ . '/templates/header.php';
         }
     })
 
-    const PROJECT_ID = 1
+    const PROJECT_ID = 102
     const saveBtn = document.getElementById('save-btn')
 
     saveBtn.addEventListener('click', () => {
@@ -279,7 +287,7 @@ require_once __DIR__ . '/templates/header.php';
         storyboard.querySelectorAll('.panel').forEach((panel, index) =>{
             panels.push({
                 shot_number: 1 + index,
-                image_url: panel.querySelector('.panel-image').src || null,
+                image_url: panel.querySelector('.panel-image').getAttribute('src') || null, // need .getAttribute('src'): if image is not set it sets it to null (otherwise just empty string)
                 prompt: panel.querySelector('span').innerText.trim()
             })
         })

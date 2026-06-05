@@ -13,7 +13,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($result !== false) {
         [$success, $role] = $result;
-        $_SESSION['USER'] = $user_input;
+
+        $stmt = $dbh->prepare("SELECT user_id FROM users WHERE username = ?");
+        $stmt->execute([$user_input]);
+        $user = $stmt->fetch();
+
+        $_SESSION['USER'] = [
+        'username' => $user_input,
+        'user_id'  => $user->user_id,
+        'role'     => $role ];
+
         $_SESSION['role'] = $role;
         header("Location: " . BASE_URL . "/index.php");
         exit;

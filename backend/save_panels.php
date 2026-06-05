@@ -1,5 +1,5 @@
 <?php
-require_once BASE_URL . '/backend/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 header('Content-Type: application/json'); //when i send back an echo json_encode nack to index, i need this header type
 
 // $project_id = $_POST['project_id'];

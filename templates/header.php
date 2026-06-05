@@ -22,7 +22,7 @@ $role = $_SESSION['role'] ?? 'guest';
         <?php endif; ?>
 
         <?php if ($role !== 'guest' && $role !== null): ?>
-            <li><a href="<?= BASE_URL ?>/pages/projects.php">Projects (<?= htmlspecialchars($_SESSION['USER']) ?>)</a></li>
+            <li><a href="<?= BASE_URL ?>/pages/projects.php">Projects (<?= htmlspecialchars($_SESSION['USER']['username']) ?>)</a></li>
         <?php endif; ?>
 
         <div>
@@ -31,7 +31,7 @@ $role = $_SESSION['role'] ?? 'guest';
         </div>
 
         <?php if ($role !== 'guest' && $role !== null): ?>
-            <li><a href="<?= BASE_URL ?>/pages/logout.php">Logout (<?= htmlspecialchars($_SESSION['USER']) ?>)</a></li>
+            <li><a href="<?= BASE_URL ?>/pages/logout.php">Logout (<?= htmlspecialchars($_SESSION['USER']['username']) ?>)</a></li>
         <?php else: ?>
             <li><a href="<?= BASE_URL ?>/pages/login.php">Login</a></li>
         <?php endif; ?>

@@ -9,8 +9,7 @@ select * from users;
 
 select * from storyboard_panels;
 
-
-
+DELETE FROM users WHERE username = 'user1';
 \timing
 
 EXPLAIN ANALYZE 
