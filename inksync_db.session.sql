@@ -29,4 +29,10 @@ INSERT INTO storyboard_panels
 (project_id, user_id, shot_number, prompt, image_url)
 VALUES (101, 1, 1, 'dafvdafv', 'adfvadfv')
 ON CONFLICT (project_id, shot_number)
-DO UPDATE SET prompt = EXCLUDED.prompt, image_url = EXCLUDED.image_url
+DO UPDATE SET prompt = EXCLUDED.prompt, image_url = EXCLUDED.image_url;
+
+
+SELECT project_id, user_id, name 
+FROM projects 
+WHERE user_id = 2
+ORDER BY project_id ASC

@@ -7,11 +7,8 @@ if ($role === 'guest' || !isset($_SESSION['USER'])) {
     exit;
 }
 
-$username = $_SERVER['USER'];
-
-
-$stmt = $dbh->prepare("SELECT username FROM users WHERE id = ?");
-$user_id = $stmt->fetch($username);
+$username = $_SESSION['USER']['username'];
+$user_id = $_SESSION['USER']['user_id'];
 $output = '';
 
 try {
@@ -22,17 +19,18 @@ try {
         ORDER BY project_id ASC"
         );
 
-    $output = $stmt->fetchAll($user_id);
+    $stmt->execute([$user_id]);
+    $output = $stmt->fetchAll();
 
-    var_dump($output, $user_id, $username);
-
+    var_dump($output);
+    echo ' | user_id: ' . $user_id . ' | username: ' . $username;
 
     echo json_encode(['success' => true]);
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }
 
-require_once __DIR__ . '/templates/header.php';
+require_once __DIR__ . '/../templates/header.php';
 ?>
 <section class="main-section">
 
@@ -43,8 +41,8 @@ require_once __DIR__ . '/templates/header.php';
     ?>
 
     <li>
-        <h2><?= $output['name'] ?></h2>
-        <p> Project ID: <?= $output['project_id'] ?></p>
+        <h2><?= $row->name ?></h2>
+        <p> Project ID: <?= $row->project_id ?></p>
     </li>
 
     <?php

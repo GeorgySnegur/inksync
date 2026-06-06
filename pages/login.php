@@ -12,15 +12,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = check_login($user_input, $pass_input);
 
     if ($result !== false) {
-        [$success, $role] = $result;
-
-        $stmt = $dbh->prepare("SELECT user_id FROM users WHERE username = ?");
-        $stmt->execute([$user_input]);
-        $user = $stmt->fetch();
+        [$success, $role, $user_id] = $result;
 
         $_SESSION['USER'] = [
         'username' => $user_input,
-        'user_id'  => $user->user_id,
+        'user_id'  => $user_id,
         'role'     => $role ];
 
         $_SESSION['role'] = $role;

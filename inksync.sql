@@ -35,7 +35,7 @@ ADD CONSTRAINT unique_project_shot UNIQUE (project_id, shot_number);
 
 INSERT INTO users (user_id, username, password, role) VALUES 
 (1, 'admin1', '$2y$12$ysRXJhQ61So/Z5OJLokR.eRfpWHroL3sKfRE7pWq0Rm3M2BFbH/JW', 'admin'),
-(2, 'user1', '$2y$12$v6GDPaxCslcYeAKGDfomYODKfv9OB8qu7T3AxrgmZs5NR3a9HdlOO', 'user');
+(2, 'user1', '$2y$10$NjVRUP5dFStttlbX3clCHucXOi3f4NHbH/3aKjE60feOKIW7P/zDy', 'user');
 
 INSERT INTO projects (project_id, user_id, name) 
 VALUES (101, 2, 'Cyberpunk Chase Scene');

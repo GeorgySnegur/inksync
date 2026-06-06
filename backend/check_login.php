@@ -32,17 +32,17 @@
 
     function check_login(string $username, string $password) {
         global $dbh;
-        $stmt = $dbh->prepare("SELECT password, role FROM users WHERE username = ?");
+        $stmt = $dbh->prepare("SELECT password, role, user_id FROM users WHERE username = ?");
         $stmt->execute([$username]);
         $output = $stmt->fetch();
         $hash = $output->password;
         $role = $output->role;
+        $user_id = $output->user_id;
 
         if (password_verify($password, $hash)) {
             echo "login successful! ";
-            return [true, $role];
+            return [true, $role, $user_id];
         } else {
-            // echo "login unsuccessful with password " . $password . " and hash " . $hash;
             return false;
         }
     }
