@@ -2,8 +2,8 @@
 
 session_start();
 
-ini_set('display_errors', true);
-error_reporting(E_ALL);
+ini_set('display_errors', false);
+// error_reporting(E_ALL);
 
 $pagetitle = "no pagetitle set";
 

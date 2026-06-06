@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS image_generations CASCADE;
 DROP TABLE IF EXISTS storyboard_panels CASCADE;
 DROP TABLE IF EXISTS projects CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
@@ -24,6 +25,12 @@ CREATE TABLE storyboard_panels (
     prompt TEXT NOT NULL,
     image_url TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE image_generations (
+    gen_id       SERIAL PRIMARY KEY,
+    user_id      INT REFERENCES users(user_id) ON DELETE CASCADE,
+    generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- says that no storyboard_panel can have identical project_id and shot_number
@@ -99,3 +106,7 @@ INSERT INTO storyboard_panels (project_id, user_id, shot_number, prompt, image_u
 (3, 2, 10, '(two-shot:1.0), both mechs locked in close quarters melee combat, tearing metal, (rim-light:0.95), dramatic pencil', 'https://storage.inksync.local/panels/p3_10.png'),
 (3, 2, 11, '(high-angle:0.85), enemy mech losing balance, falling backward into deep sand, smoke pouring from engine grid', 'https://storage.inksync.local/panels/p3_11.png'),
 (3, 2, 12, '(wide shot:1.05), victorious mech standing alone as the severe sandstorm clears, cinematic composition', 'https://storage.inksync.local/panels/p3_12.png');
+
+SELECT setval('users_user_id_seq',          (SELECT MAX(user_id)    FROM users)); --because i inserted users manually, and postgresql doesnt know that it tries to add new user with user_id 1
+SELECT setval('projects_project_id_seq',     (SELECT MAX(project_id) FROM projects));
+SELECT setval('storyboard_panels_panel_id_seq', (SELECT MAX(panel_id) FROM storyboard_panels));

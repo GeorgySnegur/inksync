@@ -22,9 +22,6 @@ try {
     $stmt->execute([$user_id]);
     $output = $stmt->fetchAll();
 
-    var_dump($output);
-    echo ' | user_id: ' . $user_id . ' | username: ' . $username;
-
     echo json_encode(['success' => true]);
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
@@ -36,18 +33,18 @@ require_once __DIR__ . '/../templates/header.php';
 
     <div class="card">
 
-    <?php
-    foreach ($output as $row):
-    ?>
-
-    <li>
-        <h2><?= $row->name ?></h2>
-        <p> Project ID: <?= $row->project_id ?></p>
-    </li>
-
-    <?php
-    endforeach;
-    ?>
+    <ul>
+        <?php
+        foreach ($output as $row):
+        ?>
+            <li>
+                <h2><?= $row->name ?></h2>
+                <p> Project ID: <?= $row->project_id ?></p>
+            </li>
+        <?php
+        endforeach;
+        ?>
+    </ul>
     </div>
 
 </section>

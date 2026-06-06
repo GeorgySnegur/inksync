@@ -18,7 +18,7 @@ $role = $_SESSION['role'] ?? 'guest';
 <header>
     <ul>
         <?php if ($role === 'admin'): ?>
-            <li><a href="<?= BASE_URL ?>/pages/register.php">Admin Panel</a></li>
+            <li><a href="<?= BASE_URL ?>/pages/admin_panel.php">Admin Panel</a></li>
         <?php endif; ?>
 
         <?php if ($role !== 'guest' && $role !== null): ?>
@@ -26,8 +26,10 @@ $role = $_SESSION['role'] ?? 'guest';
         <?php endif; ?>
 
         <div>
-            <a href="<?= BASE_URL ?>/index.php"><h1>InkSync</h1></a>
-            <p>AI Storyboard Generator — Prototype v0.2</p>
+            <li>
+                <a href="<?= BASE_URL ?>/index.php"><h1>InkSync</h1></a>
+                <p>AI Storyboard Generator — Prototype v0.3</p>
+            </li>
         </div>
 
         <?php if ($role !== 'guest' && $role !== null): ?>

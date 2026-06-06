@@ -76,6 +76,18 @@ header p {
     gap: 8vh;
 }
 
+li{
+    text-decoration: none;
+    list-style-type: none;
+    margin: 3vw;
+}
+
+li:hover{
+    border-color: var(--ink);
+    background: var(--cream);
+    transition: border-color 0.4s, background 0.3s;
+}
+
 /* _______STORYBOARD___________ */
 
 .storyboard-section{
@@ -236,7 +248,7 @@ label {
     background: var(--paper);
     resize: vertical;
     color: var(--ink);
-    transition: border-color 0.2s;
+    transition: border-color 0.3s;
 }
 /* textarea:focus {
     outline: none;
@@ -251,7 +263,7 @@ label {
     padding: 28px;
     text-align: center;
     cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
+    transition: border-color 0.3s, background 0.3s;
     position: relative;
 }
 .upload-zone:hover,

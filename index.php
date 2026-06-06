@@ -17,6 +17,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json; charset=utf-8');
 
     try {
+        $user_id = $_SESSION['USER']['user_id'];
+
+        if ($role !== 'admin') {
+            $stmt = $dbh->prepare("SELECT COUNT(*) FROM image_generations WHERE user_id = ? AND generated_at::date = CURRENT_DATE");
+            $stmt->execute([$user_id]);
+            if ($stmt->fetchColumn() >= 40) {
+                throw new Exception("Daily limit of 40 generations reached. Try again tomorrow.");
+            }
+        }
+
         $prompt      = $_POST['prompt'];
         $mime        = validate_image($_FILES['character_image']);
 
@@ -53,6 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception("We are experiencing high traffic. Try again in a moment.");
 
         }
+
+        $stmt = $dbh->prepare("INSERT INTO image_generations (user_id) VALUES (?)");
+        $stmt->execute([$user_id]);
 
         echo json_encode(['success' => true, 'image_url' => $output_url]);
     } catch (Exception $e) {
