@@ -5,8 +5,8 @@ require_once __DIR__ . '/bootstrap.php';
 
 function build_params(string $prompt, string $image_b64): array
 {
-    $full_prompt =  $prompt . ", professional black/white sketch in the style of sksfer, clean lineart, ";
-    $negative_prompt = "ai artifacts, lazy eye, bad anatomy";
+    $full_prompt =  $prompt . ", professional black/white sketch in the style of sksfer. clean lineart";
+    $negative_prompt = "bad fingers, dismembered, lazy eye, bad anatomy";
     // naked, missing eyes, bad fingers, bad anatomy, colorful, worst quality, realistic, low quality, photo
 
     return [
@@ -31,7 +31,7 @@ function build_params(string $prompt, string $image_b64): array
             "guidance_scale" => 3,
             "apply_watermark" => false,
             "negative_prompt" => $negative_prompt,
-            "prompt_strength" => 0.85,
+            "prompt_strength" => 0.8,
             "sizing_strategy" => "controlnet_1_image",
             "controlnet_1_end" => 1,
             "controlnet_2_end" => 1,
@@ -40,10 +40,10 @@ function build_params(string $prompt, string $image_b64): array
             "controlnet_2_start" => 0,
             "controlnet_3_start" => 0,
             "num_inference_steps" => 20,
-            "controlnet_1_conditioning_scale" => 0.1,
-            "controlnet_2_conditioning_scale" => 0.1,
+            "controlnet_1_conditioning_scale" => 0.2,
+            "controlnet_2_conditioning_scale" => 0.2,
             "controlnet_3_conditioning_scale" => 0,
-            "disable_safety_checker" => true
+            "disable_safety_checker" => false
         ]
     ];
 }

@@ -191,8 +191,17 @@ li:hover{
     padding: 10px;
 }
 
+.panel-text span:hover{
+    border-color: var(--ink);
+    background: var(--cream);
+}
+
+
 .panel-text span{
+    display: block;
     font-size: small;
+    min-width: 50px;
+    min-height: 20px;
 }
 
 .storyboard-meta div {
@@ -205,12 +214,16 @@ li:hover{
     font-size: 0.65rem;
     gap: 4px;
 }
-
 .storyboard-meta span {
-    flex: 1;
+    display: block;
+    flex: 1; /* tells the span to grow and fill all remaining space in the flex row */
     outline: none;
 }
 
+.storyboard-meta span:hover{
+    border-color: var(--ink);
+    background: var(--cream);
+}
 
 @media (max-width: 700px) {
     .storyboard-meta div {
@@ -255,7 +268,40 @@ label {
     border-color: var(--ink);
 } */
 
-.field { margin-bottom: 24px; }
+.field {
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+input {
+    width: 35%;
+    height: 40px;
+    padding: 12px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--paper);
+    resize: vertical;
+    color: var(--ink);
+    transition: border-color 0.3s;
+}
+
+
+select {
+    width: 15%;
+    height: 40px;
+    padding: 12px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--paper);
+    resize: vertical;
+    color: var(--ink);
+    transition: border-color 0.3s;
+
+}
 
 .upload-zone {
     border: 2px dashed var(--border);

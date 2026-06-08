@@ -31,9 +31,13 @@ require_once __DIR__ . "/../templates/header.php";
 ?>
 
 <form method="POST" action="<?= BASE_URL ?>/pages/login.php">
-    <input type="text"     name="username" placeholder="Username">
-    <input type="password" name="password" placeholder="Password">
-    <button type="submit">Login</button>
+    <div class="field">
+        <input type="text"     name="username" placeholder="Username">
+        <input type="password" name="password" placeholder="Password">
+    </div>
+    <div class="field">
+        <button type="submit">Login</button>
+    </div>
 </form>
 
 <?= htmlspecialchars($login_message) ?>
