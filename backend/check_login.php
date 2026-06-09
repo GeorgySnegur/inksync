@@ -17,14 +17,14 @@
 
         if (preg_match($pattern, $password)) {
             if (!(isset($common_passwords[strtolower($password)]))) {
-                echo "validate_password: TRUE for " . $password;
+                echo "Regestration Sucessful!";
                 return true;
             } else {
-                echo "validate_password: FALSE - common password";
+                echo "Registration Unsuccessful - common password";
                 return false;
             }
         } else {
-            echo "validate_password: FALSE - must be 8 - 64 characters long";
+            echo "Registration Unsuccessful - must be 8 - 64 characters long";
             return false;
         }
     }

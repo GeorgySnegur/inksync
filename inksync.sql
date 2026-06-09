@@ -41,7 +41,7 @@ ADD CONSTRAINT unique_project_shot UNIQUE (project_id, shot_number);
 
 INSERT INTO users ( username, password, role) VALUES 
 ('admin1', '$2y$12$ysRXJhQ61So/Z5OJLokR.eRfpWHroL3sKfRE7pWq0Rm3M2BFbH/JW', 'admin'),
-('user1', '$2y$10$NjVRUP5dFStttlbX3clCHucXOi3f4NHbH/3aKjE60feOKIW7P/zDy', 'user');
+('user1', '$2y$12$ysRXJhQ61So/Z5OJLokR.eRfpWHroL3sKfRE7pWq0Rm3M2BFbH/JW', 'user');
 
 INSERT INTO projects (user_id, name) 
 VALUES (2, 'Cyberpunk Chase Scene');
@@ -107,6 +107,6 @@ INSERT INTO storyboard_panels (project_id, user_id, shot_number, prompt, image_u
 (3, 2, 11, '(high-angle:0.85), enemy mech losing balance, falling backward into deep sand, smoke pouring from engine grid', 'https://storage.inksync.local/panels/p3_11.png'),
 (3, 2, 12, '(wide shot:1.05), victorious mech standing alone as the severe sandstorm clears, cinematic composition', 'https://storage.inksync.local/panels/p3_12.png');
 
-SELECT setval('users_user_id_seq',          (SELECT MAX(user_id)    FROM users)); --because i inserted users manually, and postgresql doesnt know that it tries to add new user with user_id 1
+SELECT setval('users_user_id_seq',          (SELECT MAX(user_id)    FROM users)); --because i inserted users manually, and postgresql doesnt know that it, it tries to add new user with user_id: 1
 SELECT setval('projects_project_id_seq',     (SELECT MAX(project_id) FROM projects));
 SELECT setval('storyboard_panels_panel_id_seq', (SELECT MAX(panel_id) FROM storyboard_panels));

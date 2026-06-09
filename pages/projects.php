@@ -22,7 +22,7 @@ try {
     $stmt->execute([$user_id]);
     $output = $stmt->fetchAll();
 
-    echo json_encode(['success' => true]);
+    // echo json_encode(['success' => true]);
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }

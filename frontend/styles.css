@@ -42,8 +42,6 @@ header ul {
 }
 
 header li a{
-    margin-left: 5vw;
-    margin-right: 5vw;
     text-decoration: none;
     color: var(--ink)
 }
