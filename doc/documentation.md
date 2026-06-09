@@ -50,7 +50,7 @@ InkSync is a web-based AI storyboard generator developed as a student project at
 4. Make sure the `backend/.htaccess` file is in place — it blocks direct browser access to the backend folder.
 5. Navigate to `http://localhost/inksync` to start the app.
 
-For the university server (`users.ct.fh-salzburg.ac.at`), the config already contains the correct credentials and switches automatically based on `HTTP\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_HOST`.
+For the university server (`users.ct.fh-salzburg.ac.at`), the config already contains the correct credentials and switches automatically based on `HTTP\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_HOST`.
 
 \---
 
@@ -82,7 +82,7 @@ inksync/
 
 │   inksync.sql					- database schema
 
-│   inksync\\\\\\\_db.session.sql
+│   inksync\\\\\\\\\\\\\\\_db.session.sql
 
 │   warmup.php					- pings Replicate to reduce cold-start time
 
@@ -98,25 +98,25 @@ inksync/
 
 │   │   .htaccess
 
-│   │   api.php					- HTTP helper functions (post\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_json, get\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_json)
+│   │   api.php					- HTTP helper functions (post\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_json, get\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_json)
 
-│   │   api\\\\\\\_new.php
+│   │   api\\\\\\\\\\\\\\\_new.php
 
-│   │   bootstrap.php				- session start, DB connection, BASE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_URL
+│   │   bootstrap.php				- session start, DB connection, BASE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_URL
 
-│   │   check\\\\\\\_login.php
+│   │   check\\\\\\\\\\\\\\\_login.php
 
 │   │   config.php				- DB credentials + Replicate API key (not committed)
 
 │   │   prompt.php				- Builds Replicate request params (ControlNet, LoRA)
 
-│   │   save\\\\\\\_panels.php			- saves panel data to DB
+│   │   save\\\\\\\\\\\\\\\_panels.php			- saves panel data to DB
 
 │   │
 
 │   └───security
 
-│           10k\\\\\\\_common\\\\\\\_passwords.txt
+│           10k\\\\\\\\\\\\\\\_common\\\\\\\\\\\\\\\_passwords.txt
 
 │
 
@@ -134,13 +134,13 @@ inksync/
 
 ├───pages
 
-│       admin\\\\\\\_panel.php
+│       admin\\\\\\\\\\\\\\\_panel.php
 
 │       login.php
 
 │       logout.php
 
-│       panel\\\\\\\_partial.php
+│       panel\\\\\\\\\\\\\\\_partial.php
 
 │       projects.php
 
@@ -150,7 +150,7 @@ inksync/
 
 ├───scripts						- client-side export library
 
-\\\&#x09;(html2canvas)
+\\\\\\\&#x09;(html2canvas)
 
 
 ```
