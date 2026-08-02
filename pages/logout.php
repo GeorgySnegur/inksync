@@ -9,5 +9,8 @@ if (isset($_COOKIE[session_name()])) {
 
 session_destroy();
 
-header("Location: " . BASE_URL . "/pages/login.php");
+// Use the clean-URL route (/login), not the raw pages/login.php path --
+// the raw path bypasses .htaccess rewriting and can 404 depending on
+// server config / direct-access rules.
+header("Location: " . BASE_URL . "/login");
 exit;

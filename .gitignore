@@ -4,7 +4,7 @@
 10k_common_passwords.txt
 .DS_Store
 Thumbs.db
-docs/
+doc/
 
 # ======================
 # SECRETS & CONFIG

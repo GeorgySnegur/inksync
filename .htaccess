@@ -1,10 +1,28 @@
 # InkSync — Root .htaccess
-# Place this file as /.htaccess
+# Requires mod_rewrite + AllowOverride All (both on by default in XAMPP).
 
-# Disable directory listings (never show folder contents in browser)
+# Disable directory listings
 Options -Indexes
 
-# Block direct access to sensitive file types
+# Block direct browser access to sensitive file types
 <FilesMatch "\.(sql|env|log|txt|md|gitignore)$">
     Require all denied
 </FilesMatch>
+
+# Clean URLs (Phase 8)
+# Patterns match the path relative to this file's directory (project root),
+# so no RewriteBase is needed — works on both localhost and the uni server.
+RewriteEngine On
+
+# Let real files and directories pass through untouched
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Map clean URLs to the actual PHP files
+RewriteRule ^login/?$    pages/login.php       [L,QSA]
+RewriteRule ^projects/?$ pages/projects.php    [L,QSA]
+RewriteRule ^admin/?$    pages/admin_panel.php [L,QSA]
+RewriteRule ^logout/?$   pages/logout.php      [L,QSA]
+RewriteRule ^consent/?$  pages/consent.php     [L,QSA]
+RewriteRule ^privacy/?$  pages/privacy.php     [L,QSA]

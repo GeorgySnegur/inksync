@@ -1,0 +1,4 @@
+# InkSync — lang/.htaccess
+# These files are PHP arrays meant to be require()'d, never requested
+# directly by a browser.
+Require all denied

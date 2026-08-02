@@ -4,6 +4,34 @@
 
 Require all denied
 
+# Note: delete_panel.php has no allow entry below, so it's already blocked
+# by "Require all denied" above (dead/unused -- nothing in the UI calls it).
+# The file itself has been stubbed out too; safe to delete it entirely.
+
 <Files "save_panels.php">
+    Require all granted
+</Files>
+
+<Files "get_project_panels.php">
+    Require all granted
+</Files>
+
+<Files "poll_prediction.php">
+    Require all granted
+</Files>
+
+<Files "rename_project.php">
+    Require all granted
+</Files>
+
+<Files "create_project.php">
+    Require all granted
+</Files>
+
+<Files "delete_project.php">
+    Require all granted
+</Files>
+
+<Files "upload_hero_image.php">
     Require all granted
 </Files>

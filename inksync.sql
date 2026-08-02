@@ -8,13 +8,20 @@ CREATE TABLE users (
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     role VARCHAR(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);   
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    -- Privacy policy / terms-of-use consent (see backend/consent.php).
+    -- NULL until the user accepts; consent_version lets us re-prompt
+    -- everyone if the policy text changes materially later.
+    consent_accepted_at TIMESTAMP,
+    consent_version     VARCHAR(20)
+);
 
 CREATE TABLE projects(
     project_id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
-    name VARCHAR(50) NOT NULL UNIQUE
+    name VARCHAR(50) NOT NULL,
+    hero_image_url TEXT,
+    CONSTRAINT projects_user_name_unique UNIQUE (user_id, name)
 );
 
 CREATE TABLE storyboard_panels (
@@ -24,6 +31,7 @@ CREATE TABLE storyboard_panels (
     shot_number INT NOT NULL,
     prompt TEXT NOT NULL,
     image_url TEXT,
+    notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -31,6 +39,16 @@ CREATE TABLE image_generations (
     gen_id       SERIAL PRIMARY KEY,
     user_id      INT REFERENCES users(user_id) ON DELETE CASCADE,
     generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Login brute-force lockout tracking (5 failed attempts -> 15 min lockout).
+-- Keyed by username rather than user_id since a lockout must apply even
+-- when the username doesn't exist (otherwise an attacker could probe for
+-- valid usernames by checking which ones never lock out).
+CREATE TABLE login_attempts (
+    username     VARCHAR(50) PRIMARY KEY,
+    failed_count INT NOT NULL DEFAULT 0,
+    locked_until TIMESTAMP
 );
 
 -- says that no storyboard_panel can have identical project_id and shot_number

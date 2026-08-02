@@ -10,6 +10,10 @@ if ($_SESSION['role'] !== 'admin') {
 $message = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Reject requests with a missing or wrong CSRF token
+    csrf_verify_post();
+
     $username = $_POST['username'];
     $password = $_POST['password'];
     $role     = $_POST['role'];
@@ -23,7 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([$username, $password_hash, $role]);
                 $message = "User registered successfully.";
             } catch (PDOException $e) {
-                $message = "Error: " . htmlspecialchars($e->getMessage());
+                // Don't leak raw DB error text (e.g. constraint/column names,
+                // driver details) to the admin UI -- log it server-side and
+                // show a generic message instead. A unique-violation here
+                // almost always just means the username is taken.
+                error_log("admin_panel.php: user registration failed: " . $e->getMessage());
+                $message = (strpos($e->getMessage(), 'unique') !== false || $e->getCode() === '23505')
+                    ? "Error: that username is already taken."
+                    : "Error: could not register user. Please try again.";
             }
         } else {
             $message = "Role name is invalid.";
@@ -73,7 +84,9 @@ require_once __DIR__ . "/../templates/header.php";
         </table>
         <hr>
         <br>
-        <form method="POST" action="<?= BASE_URL ?>/pages/admin_panel.php">
+        <form method="POST" action="<?= BASE_URL ?>/admin">
+            <!-- CSRF hidden field — server checks this matches the session token -->
+            <input type="hidden" name="_csrf" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
             <div class="field">
                 <h2>Register New User</h2>
             </div>

@@ -1,0 +1,5 @@
+# Block PHP execution inside the storage directory.
+# This prevents a malicious upload from being run as PHP code,
+# even if somehow a .php file ended up here.
+php_flag engine off
+Options -ExecCGI

@@ -33,12 +33,22 @@ function get_json(string $url, string $api_key): array
         'http' => [
             'method'        => 'GET',
             'header'        => "Authorization: Token $api_key\r\n",
-            'ignore_errors' => true
+            'ignore_errors' => true,
+            'timeout'       => 15
         ]
     ];
     $context  = stream_context_create($options);
     $response = file_get_contents($url, false, $context);
-    return json_decode($response, true);
+
+    if ($response === false) {
+        throw new Exception("Network error: could not reach Replicate.");
+    }
+
+    $decoded = json_decode($response, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        throw new Exception("Could not decode API response: " . json_last_error_msg());
+    }
+    return $decoded;
 }
 
 // https://www.php.net/manual/en/function.base64-encode.php
@@ -53,6 +63,11 @@ function file_to_base64(string $tmp_path, string $mime_type): string
 // $_FILES['character_image'] is an array with name, type, tmp_name etc
 function validate_image(array $file): string
 {
+    // Check for PHP-level upload errors first (partial uploads, missing file, server limits exceeded, etc.)
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        throw new Exception("Upload failed (PHP error code " . $file['error'] . ").");
+    }
+
     $max_bytes = 5 * 1024 * 1024;
     if ($file['size'] > $max_bytes) {
         throw new Exception("Image must be under 5 MB.");
@@ -67,6 +82,19 @@ function validate_image(array $file): string
     // https://www.php.net/manual/es/function.finfo-file.php
     if (!in_array($mime, $allowed, true)) {
         throw new Exception("Only JPEG, PNG, or WebP images are allowed.");
+    }
+
+    // Decompression-bomb guard: a tiny file (well under the 5 MB cap) can
+    // still declare an enormous pixel grid (e.g. 30000x30000), and GD will
+    // happily try to allocate gigabytes of RAM decoding it. Check the
+    // declared dimensions BEFORE any imagecreatefrom*() call decodes them.
+    $dims = getimagesize($file['tmp_name']);
+    if ($dims === false) {
+        throw new Exception("Could not read image dimensions.");
+    }
+    [$width, $height] = $dims;
+    if ($width > 8000 || $height > 8000 || ($width * $height) > 40_000_000) {
+        throw new Exception("Image resolution is too large.");
     }
 
     return $mime;

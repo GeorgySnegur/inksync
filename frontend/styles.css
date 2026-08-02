@@ -64,6 +64,67 @@ header p {
     letter-spacing: 0.05em;
 }
 
+.lang-switcher-float {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.lang-switcher-float a {
+    text-decoration: none;
+    color: var(--muted);
+    padding: 2px 4px;
+    transition: color 0.2s;
+}
+.lang-switcher-float a:hover {
+    color: var(--ink);
+}
+
+.lang-switcher-float a.lang-active {
+    color: var(--ink);
+    font-weight: 700;
+}
+
+.lang-popup {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background: var(--cream);
+    border-bottom: 1.5px solid var(--border);
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.lang-popup-btn {
+    text-decoration: none;
+    padding: 4px 12px;
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    color: var(--ink);
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.lang-popup-yes {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
 .main-section{
     display: flex;
     flex-direction: column;
@@ -132,11 +193,12 @@ li:hover{
     min-height: 22px;
 }
 
+/* 4 columns x 2 rows on-screen grid -- matches the 8-panels-per-page
+   pagination and the 4x2 sheet layout used by the PDF export. */
 .storyboard{
 
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-columns: repeat(4, 1fr);
 
     width: 100%;
 
@@ -145,7 +207,7 @@ li:hover{
     border-radius: var(--radius);
     padding: 32px;
     box-shadow: 4px 4px 0 var(--cream);
-    gap: 20px;
+    gap: 24px;
 }
 
 .buttons-card{
@@ -165,10 +227,19 @@ li:hover{
     background-color: rgb(84, 99, 205);
 }
 
+/* Each panel is a grid cell: image on top, full width, with the
+   pick/description/notes controls stacked underneath. */
 .panel{
     display: flex;
     flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
     box-sizing: border-box;
+}
+
+.panel-image-wrap {
+    position: relative;
+    width: 100%;
 }
 
 .panel-image{
@@ -177,7 +248,128 @@ li:hover{
     border: 1px solid black;
 
     aspect-ratio: 4 / 3;
+    object-fit: cover;
 }
+
+.panel-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    gap: 8px;
+}
+
+.panel-shot-label {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+/* Insert/Cut/Paste toolbar: overlays the panel image itself (so it doesn't
+   stretch/shift the layout below), hidden until the panel is hovered
+   (desktop) or tapped (mobile, via JS toggling .show-actions on .panel). */
+.panel-toolbar {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    opacity: 0;
+    pointer-events: none;
+    background: rgba(0, 0, 0, 0.18);
+    transition: opacity 0.2s ease;
+}
+
+.panel:hover .panel-toolbar,
+.panel.show-actions .panel-toolbar {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Drag-to-reorder handle: press and drag to swap this panel with whichever
+   panel you drag over. Same hover/tap reveal as the toolbar above, but
+   pinned to a corner badge instead of covering the whole image. */
+.drag-handle {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    z-index: 6;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: grab;
+    opacity: 0;
+    pointer-events: none;
+    touch-action: none;
+    user-select: none;
+    transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.drag-handle:hover { background: rgba(0, 0, 0, 0.7); }
+
+.panel:hover .drag-handle,
+.panel.show-actions .drag-handle {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Applied to the panel currently being dragged (it's lifted out of the grid
+   and positioned fixed under the pointer while dragging). */
+.panel.dragging {
+    opacity: 0.9;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+    cursor: grabbing;
+}
+
+/* Sits in the dragged panel's vacated grid slot until it's dropped, so the
+   grid doesn't collapse/reflow unexpectedly mid-drag. */
+.panel-placeholder {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    background: var(--cream);
+    box-sizing: border-box;
+}
+
+.panel-toolbar .pick-btn,
+.panel-toolbar .cut-btn,
+.panel-toolbar .paste-btn {
+    width: 80%;
+    max-width: 220px;
+    padding: 10px 14px;
+    font-size: 0.75rem;
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s, opacity 0.2s;
+    color: #fff;
+    opacity: 0.85;
+}
+
+.panel-toolbar .pick-btn:hover,
+.panel-toolbar .cut-btn:hover,
+.panel-toolbar .paste-btn:hover {
+    opacity: 1;
+}
+
+.panel-toolbar .pick-btn { background: rgba(112, 213, 112, 0.85); }
+.cut-btn   { background: rgba(220, 120, 90, 0.85); }
+.paste-btn { background: rgba(90, 140, 220, 0.85); }
 
 .panel-text{
     overflow: hidden;
@@ -185,7 +377,7 @@ li:hover{
     box-sizing: border-box;
     border: 1px solid black;
     width: 100%;
-    height: auto;
+    height: 70px;
     padding: 10px;
 }
 
@@ -261,10 +453,20 @@ label {
     color: var(--ink);
     transition: border-color 0.3s;
 }
-/* textarea:focus {
+
+/* Hover + focus feedback for all text inputs/selects/textareas */
+input:hover,
+textarea:hover,
+select:hover {
+    border-color: var(--ink);
+}
+input:focus,
+textarea:focus,
+select:focus {
     outline: none;
     border-color: var(--ink);
-} */
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.06);
+}
 
 .field {
     margin-bottom: 24px;
@@ -401,6 +603,31 @@ button:disabled {
     cursor: not-allowed;
 }
 
+/* ---- Progress bar (Phase 4) ---- */
+#progress-wrap {
+    margin-top: 20px;
+}
+.progress-track {
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+}
+#progress-fill {
+    height: 100%;
+    background: var(--ink);
+    width: 0%;
+    transition: width 0.9s ease;
+}
+#progress-label {
+    margin-top: 6px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: 0.05em;
+}
+
 #status {
     margin-top: 20px;
     padding: 12px 16px;
@@ -408,9 +635,29 @@ button:disabled {
     font-size: 0.85rem;
     display: none;
 }
-#status.info    { background: #eef; border: 1px solid #aac; color: #336; }
 #status.error   { background: #fee; border: 1px solid #faa; color: var(--accent); }
 #status.loading { background: var(--cream); border: 1px solid var(--border); color: var(--muted); }
+
+/* "info" status (save confirmations, autosave, cut/paste feedback) is
+   anchored to the top of the viewport instead of inline, so it's visible
+   no matter how far the user has scrolled down a long storyboard page --
+   previously it rendered inline near the form and went unnoticed after
+   scrolling to the panels below. Semi-transparent + non-blocking. */
+#status.info {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    margin-top: 0;
+    max-width: 90%;
+    background: rgba(238, 238, 255, 0.9);
+    border: 1px solid rgba(170, 170, 204, 0.7);
+    color: #336;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    pointer-events: none;
+    text-align: center;
+}
 
 .spinner {
     display: inline-block;
@@ -456,17 +703,293 @@ button:disabled {
     text-decoration: underline;
 }
 
-@media (max-width: 1080px) {
-    .storyboard{
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr 1fr 1fr 1fr;
-    }
+/* ---- Advanced controls (Phase 5) ---- */
+.advanced-options {
+    margin-top: 20px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0;
+}
+.advanced-options summary {
+    cursor: pointer;
+    padding: 10px 14px;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    user-select: none;
+}
+.advanced-options summary:hover { color: var(--ink); }
+.advanced-options .sliders-inner {
+    padding: 14px 16px 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.slider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.slider-row label {
+    width: 190px;
+    flex-shrink: 0;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 0;
+    text-align: left;
+}
+.slider-row input[type="range"] {
+    flex: 1;
+    height: 4px;
+    accent-color: var(--ink);
+    cursor: pointer;
+    width: auto;
+    background: transparent;
+    padding: 0;
+    border: none;
+}
+.slider-row.checkbox-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    accent-color: var(--ink);
+    cursor: pointer;
+    margin: 0;
+}
+.slider-row input[type="number"] {
+    width: 58px;
+    flex-shrink: 0;
+    padding: 4px 6px;
+    height: auto;
+    font-size: 0.8rem;
+    text-align: center;
+}
+.slider-hint {
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-style: italic;
+    text-align: center;
+    margin-top: 4px;
 }
 
+/* ---- Panel notes (Phase 6) ---- */
+.panel-notes {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--border);
+    border-top: none;
+    padding: 6px 8px;
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    color: var(--muted);
+    background: var(--paper);
+    resize: none;
+    height: 42px;
+    overflow-y: auto;
+}
+.panel-notes:focus { outline: none; border-color: var(--ink); }
+.panel-notes::placeholder { color: var(--border); }
+
+/* ---- Projects page (Phase 6) ---- */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 24px;
+    width: 100%;
+    max-width: 1000px;
+}
+.project-card {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 3px 3px 0 var(--cream);
+    transition: box-shadow 0.2s, transform 0.1s;
+    cursor: pointer; /* Phase 9: the whole card opens the project, not just "Open" */
+}
+.project-card:hover { box-shadow: 5px 5px 0 var(--border); }
+.project-card:active { transform: translateY(1px); }
+.project-thumbnail {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    display: block;
+    background: var(--cream);
+    border-bottom: 1px solid var(--border);
+}
+.project-thumb-placeholder {
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: var(--border);
+    border-bottom: 1px solid var(--border);
+}
+.project-info { padding: 12px 14px 8px; }
+.project-name {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: normal;
+    margin-bottom: 10px;
+    color: var(--ink);
+}
+.project-name-input {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    color: var(--ink);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2px 6px;
+    width: 100%;
+    background: var(--paper);
+    display: none;
+}
+.project-actions {
+    display: flex;
+    gap: 8px;
+    padding: 0 14px 14px;
+    position: relative;
+    z-index: 1; /* sit above the card's own click-to-open handler visually */
+}
+/* .btn-open is an <a>, the others are <button> -- style both the same way
+   so "Open" doesn't render as a bare underlined link (the global button{}
+   rule only targets <button> elements). */
+.project-actions a,
+.project-actions button {
+    flex: 1;
+    display: block;
+    padding: 8px 7px;
+    margin: 0;
+    max-width: none;
+    background: var(--ink);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+.btn-open:hover   { background: #333; }
+.btn-rename       { background: var(--muted); }
+.btn-delete       { background: var(--accent); }
+.btn-delete:hover { background: #922b21; }
+
+.btn-new-storyboard {
+    display: inline-block;
+    padding: 12px 28px;
+    background: var(--ink);
+    color: white;
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+.btn-new-storyboard:hover { background: var(--accent); }
+
+/* ---- Phase 9: pagination nav for projects with more than 8 panels ---- */
+.storyboard-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin: 16px 0;
+}
+.page-nav-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background: var(--ink);
+    color: white;
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+.page-nav-btn:hover { background: var(--accent); }
+.page-nav-btn.disabled {
+    background: var(--cream);
+    color: var(--border);
+    cursor: default;
+    pointer-events: none;
+}
+.page-indicator {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--muted);
+    white-space: nowrap;
+}
+.pagination-save-hint {
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--muted);
+    font-style: italic;
+    margin: 4px 0 24px;
+}
+
+/* ---- Phase 8: Responsive polish ---- */
 @media (max-width: 720px) {
-    .storyboard{
-        grid-template-columns: 1fr ;
-        grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    body { padding: 20px 12px 60px; }
+
+    header ul {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+    }
+    header li { margin: 4px 8px; }
+
+    .lang-switcher-float {
+        top: 8px;
+        right: 8px;
+        padding: 4px 8px;
+        font-size: 0.7rem;
     }
 
+    .storyboard { padding: 16px; grid-template-columns: repeat(2, 1fr); }
+    .storyboard-section { padding: 16px; }
+
+    .card { padding: 20px 16px; }
+
+    .slider-row { flex-wrap: wrap; }
+    .slider-row label { width: 100%; margin-bottom: 4px; }
+
+    .buttons-card { flex-direction: column; }
+}
+
+/* ---- Mobile single-column breakpoint ---- */
+@media (max-width: 480px) {
+    .storyboard { grid-template-columns: 1fr; padding: 12px; gap: 16px; }
+    .storyboard-meta { grid-template-columns: 1fr; }
+    .projects-grid    { grid-template-columns: 1fr; }
+
+    .storyboard-pagination {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .buttons-card button,
+    #save-btn,
+    #submit-btn { width: 100%; }
+}
+
+/* ---- Dragover on textarea (Phase 8) ---- */
+.card.drag-active .upload-zone {
+    border-color: var(--ink);
+    background: var(--cream);
 }
