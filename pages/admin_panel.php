@@ -10,7 +10,6 @@ if ($_SESSION['role'] !== 'admin') {
 $message = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     // Reject requests with a missing or wrong CSRF token
     csrf_verify_post();
 
@@ -70,7 +69,7 @@ require_once __DIR__ . "/../templates/header.php";
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($users as $u): ?>
+                <?php foreach ($users as $u) : ?>
                 <tr>
                     <td style="padding:8px;"><?= htmlspecialchars($u->username) ?></td>
                     <td style="padding:8px;"><?= htmlspecialchars($u->role) ?></td>
@@ -101,7 +100,7 @@ require_once __DIR__ . "/../templates/header.php";
                 <button type="submit">Register</button>
         </form>
 
-        <?php if ($message): ?>
+        <?php if ($message) : ?>
             <p><?= htmlspecialchars($message) ?></p>
         <?php endif; ?>
 

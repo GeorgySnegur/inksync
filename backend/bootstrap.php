@@ -1,6 +1,6 @@
 <?php
 
-ini_set('display_errors', false);
+ini_set('display_errors', true);
 // error_reporting(E_ALL);
 
 $pagetitle = "no pagetitle set";
@@ -29,7 +29,8 @@ if (empty($_SESSION['csrf_token'])) {
 }
 
 // Verify CSRF token submitted as a hidden form field (for normal HTML forms)
-function csrf_verify_post(): void {
+function csrf_verify_post(): void
+{
     $submitted = $_POST['_csrf'] ?? '';
     if (!hash_equals($_SESSION['csrf_token'], $submitted)) {
         http_response_code(403);
@@ -38,7 +39,8 @@ function csrf_verify_post(): void {
 }
 
 // Verify CSRF token submitted as a request header (for fetch() / XHR calls)
-function csrf_verify_header(): void {
+function csrf_verify_header(): void
+{
     $submitted = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
     if (!hash_equals($_SESSION['csrf_token'], $submitted)) {
         http_response_code(403);
@@ -51,15 +53,16 @@ require_once __DIR__ . "/i18n.php";
 
 require_once __DIR__ . "/config.php";
 
-if ( ! $DB_NAME ) die ('please create config.php, define $DB_NAME, $DSN, $DB_USER, $DB_PASS there. See config_sample.php');
+if (! $DB_NAME) {
+    die('please create config.php, define $DB_NAME, $DSN, $DB_USER, $DB_PASS there. See config_sample.php');
+}
 
 try {
     $dbh = new PDO($DSN, $DB_USER, $DB_PASS);
-    $dbh->setAttribute(PDO::ATTR_ERRMODE,            PDO::ERRMODE_EXCEPTION);
+    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $dbh->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
-
 } catch (Exception $e) {
-    die ("Problem connecting to database $DB_NAME as $DB_USER: " . $e->getMessage() );
+    die("Problem connecting to database $DB_NAME as $DB_USER: " . $e->getMessage());
 }
 
 //       is https set? (either unset, or is set to 'off', by Apache server for example)
@@ -73,9 +76,11 @@ if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
 // $host and $isLocal are already set above (before session_start)
 
 if ($isLocal) {
-    $subpath = '/inksync_v3';
-} else { 
-    $subpath = '/~fhs54132/inksync_v3'; 
+    // php -S serves the project root directly (no XAMPP htdocs subfolder),
+    // so there's no URL prefix locally anymore.
+    $subpath = '';
+} else {
+    $subpath = '/~fhs54132/inksync_v3';
 }
 
 define('BASE_URL', $scheme . '://' . $host . $subpath);

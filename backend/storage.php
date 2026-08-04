@@ -1,4 +1,5 @@
 <?php
+
 // storage.php — helpers for saving and deleting generated panel images.
 //
 // Images are stored at:  storage/panels/{user_id}/{uuid}.jpg
@@ -122,19 +123,27 @@ function store_uploaded_image(string $tmp_path, int $user_id): string
 // Safe to call with null or an external URL — it silently does nothing in those cases.
 function delete_panel_image(?string $relative_path): void
 {
-    if ($relative_path === null) return;
+    if ($relative_path === null) {
+        return;
+    }
 
     // Only delete files that live inside our own storage directory
-    if (!str_starts_with($relative_path, '/storage/panels/')) return;
+    if (!str_starts_with($relative_path, '/storage/panels/')) {
+        return;
+    }
 
     $abs_path = __DIR__ . '/..' . $relative_path;
 
     // Resolve the real path and confirm it is still inside STORAGE_ROOT
     // (guards against path traversal like /../../../etc/passwd)
     $real = realpath($abs_path);
-    if ($real === false) return; // file doesn't exist
+    if ($real === false) {
+        return; // file doesn't exist
+    }
 
-    if (!str_starts_with($real, realpath(STORAGE_ROOT))) return; // outside storage root
+    if (!str_starts_with($real, realpath(STORAGE_ROOT))) {
+        return; // outside storage root
+    }
 
     unlink($real);
 }

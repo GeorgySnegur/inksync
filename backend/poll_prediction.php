@@ -1,4 +1,5 @@
 <?php
+
 // poll_prediction.php — called by the JS every 3 s to check on a running Replicate prediction.
 //
 // Why POST (not GET)?
@@ -57,7 +58,6 @@ try {
     $status = $result['status'] ?? 'unknown';
 
     if ($status === 'succeeded') {
-
         $output_url = $result['output'][2] ?? null;
         if (!$output_url) {
             echo json_encode(['status' => 'failed', 'error' => 'Replicate returned no output URL.']);
@@ -76,16 +76,11 @@ try {
         $_SESSION['processed_predictions'][$prediction_id] = $relative_path;
 
         echo json_encode(['status' => 'succeeded', 'image_url' => $relative_path]);
-
     } elseif ($status === 'failed' || $status === 'canceled') {
-
         echo json_encode(['status' => $status, 'error' => $result['error'] ?? 'Generation failed.']);
-
     } else {
-
         // still running: 'starting' or 'processing'
         echo json_encode(['status' => $status]);
-
     }
 } catch (\Throwable $e) {
     error_log('poll_prediction.php: ' . $e->getMessage());

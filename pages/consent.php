@@ -49,7 +49,7 @@ $lang = $_SESSION['lang'] ?? 'en';
 <section class="main-section">
     <div class="card" style="max-width: 640px; margin: 3rem auto;">
 
-        <?php if ($lang === 'de'): ?>
+        <?php if ($lang === 'de') : ?>
             <h2>Bevor du fortfährst</h2>
             <p>InkSync ist ein Studierendenprojekt der FH Salzburg und befindet sich aktuell in einer Testphase mit ausgewählten Testpersonen. Bitte lies unsere <a href="<?= BASE_URL ?>/privacy" target="_blank">Datenschutzerklärung</a> und bestätige Folgendes, um fortzufahren:</p>
             <ul>
@@ -58,7 +58,7 @@ $lang = $_SESSION['lang'] ?? 'en';
                 <li>Mir ist bekannt, dass im Rahmen dieser Testphase generierte Panels <strong>nicht für kommerzielle Zwecke</strong> verwendet werden dürfen, sofern nicht ausdrücklich schriftlich anders vereinbart.</li>
                 <li>Meine Teilnahme an dieser Testphase ist freiwillig.</li>
             </ul>
-        <?php else: ?>
+        <?php else : ?>
             <h2>Before you continue</h2>
             <p>InkSync is a student project at FH Salzburg, currently in a testing phase with selected test users. Please read our <a href="<?= BASE_URL ?>/privacy" target="_blank">Privacy Policy</a> and confirm the following to continue:</p>
             <ul>

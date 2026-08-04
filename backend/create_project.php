@@ -1,4 +1,5 @@
 <?php
+
 // create_project.php — create a new, empty project for the logged-in user.
 // Used by the storyboard page when the user clicks "Save" without an
 // active project: we create the project first, then save_panels.php is

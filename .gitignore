@@ -1,7 +1,10 @@
 # ======================
 # CUSTOM
 # ======================
-10k_common_passwords.txt
+# NOTE (2026-08-03): 10k_common_passwords.txt was gitignored here, but
+# validate_password() (backend/check_login.php) reads it at runtime with no
+# fallback -- a fresh clone/CI checkout would 500 on first login attempt.
+# It's a public wordlist, not a secret, and only 72KB -- committing it.
 .DS_Store
 Thumbs.db
 doc/
@@ -19,8 +22,11 @@ secrets.php
 # ======================
 # PHP
 # ======================
+# NOTE (2026-08-04): composer.lock was gitignored here, but this is an
+# application (not a published library) -- standard practice is to commit
+# the lock file so every environment (dev, CI, prod) installs the exact
+# same dependency versions instead of silently drifting. Committing it.
 /vendor/
-composer.lock
 *.log
 *.cache
 

@@ -1,4 +1,5 @@
 <?php
+
 // upload_hero_image.php — let a user manually set/override the hero image
 // (thumbnail) shown for a project on the Projects page.
 // Multipart POST: project_id, hero_image (file).

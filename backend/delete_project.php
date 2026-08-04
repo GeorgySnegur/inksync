@@ -1,4 +1,5 @@
 <?php
+
 // delete_project.php — delete a project, all its panels, and all their image files.
 // The DB cascade (ON DELETE CASCADE) removes panel rows automatically;
 // we handle the image files manually here.

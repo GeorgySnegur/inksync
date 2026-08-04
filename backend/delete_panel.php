@@ -1,4 +1,5 @@
 <?php
+
 // delete_panel.php -- DEAD CODE, intentionally disabled.
 //
 // Nothing in the UI calls this endpoint, and backend/.htaccess does not

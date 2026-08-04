@@ -25,8 +25,7 @@ $lang = $_SESSION['lang'] ?? 'en';
 
 <p><a href="<?= BASE_URL ?>/">&larr; <?= $lang === 'de' ? 'Zurück' : 'Back' ?></a></p>
 
-<?php if ($lang === 'de'): ?>
-
+<?php if ($lang === 'de') : ?>
 <h1>Datenschutzerklärung — InkSync</h1>
 <p><em>Stand: 23. Juni 2026 (Version 2026-06-23)</em></p>
 
@@ -98,8 +97,7 @@ E-Mail: <span>georgysnegur@gmail.com</span><br>
 <h2>12. Änderungen dieser Erklärung</h2>
 <p>Wird diese Erklärung inhaltlich wesentlich geändert, wirst du beim nächsten Login erneut um Zustimmung gebeten.</p>
 
-<?php else: ?>
-
+<?php else : ?>
 <h1>Privacy Policy — InkSync</h1>
 <p><em>Last updated: June 23, 2026 (version 2026-06-23)</em></p>
 

@@ -1,4 +1,5 @@
 <?php
+
 // i18n.php — minimal translation framework.
 //
 // How it works:
@@ -58,8 +59,12 @@ function t(string $key, array $replacements = []): string
 // dismissed) yet this session.
 function should_prompt_german(): bool
 {
-    if (($_SESSION['lang_prompt_seen'] ?? false) === true) return false;
-    if ($_SESSION['lang'] !== DEFAULT_LANG) return false;
+    if (($_SESSION['lang_prompt_seen'] ?? false) === true) {
+        return false;
+    }
+    if ($_SESSION['lang'] !== DEFAULT_LANG) {
+        return false;
+    }
 
     $accept  = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
     $primary = strtolower(trim(explode(',', $accept)[0] ?? ''));

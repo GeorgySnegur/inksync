@@ -1,4 +1,5 @@
 <?php
+
 // rename_project.php — rename a project for the logged-in user.
 
 require_once __DIR__ . '/bootstrap.php';

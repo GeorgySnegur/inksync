@@ -38,12 +38,11 @@ require_once __DIR__ . '/../templates/header.php';
             <h2 style="font-family:var(--font-head); font-weight:normal;"><?= htmlspecialchars(t('projects.heading')) ?></h2>
         </div>
 
-        <?php if (empty($projects)): ?>
+        <?php if (empty($projects)) : ?>
             <p style="color:var(--muted);"><?= htmlspecialchars(t('projects.empty')) ?> <a href="<?= BASE_URL ?>/"><?= htmlspecialchars(t('projects.start_generating')) ?></a></p>
-        <?php else: ?>
-
+        <?php else : ?>
         <div class="projects-grid">
-            <?php foreach ($projects as $proj):
+            <?php foreach ($projects as $proj) :
                 // A manually-uploaded hero image always wins over the auto-picked
                 // first-panel thumbnail.
                 $thumbnail = $proj->hero_image_url ?: $proj->auto_thumbnail;
@@ -54,7 +53,7 @@ require_once __DIR__ . '/../templates/header.php';
                         ? BASE_URL . $thumbnail
                         : $thumbnail;
                 }
-            ?>
+                ?>
             <div class="project-card" id="card-<?= $proj->project_id ?>"
                  data-open-url="<?= BASE_URL ?>/?project_id=<?= $proj->project_id ?>"
                  onclick="openProjectCard(event, this)">
@@ -62,10 +61,10 @@ require_once __DIR__ . '/../templates/header.php';
                 <!-- Thumbnail. onerror covers the case where the DB still has a path
                      but the actual file was removed (e.g. by orphan cleanup) — without
                      this the browser would show a broken-image icon instead of a clean placeholder. -->
-                <?php if ($thumb_url): ?>
+                <?php if ($thumb_url) : ?>
                     <img class="project-thumbnail" src="<?= htmlspecialchars($thumb_url) ?>" alt="Project thumbnail"
                          onerror="this.replaceWith(Object.assign(document.createElement('div'), {className:'project-thumb-placeholder', textContent:'No images yet'}))">
-                <?php else: ?>
+                <?php else : ?>
                     <div class="project-thumb-placeholder">No images yet</div>
                 <?php endif; ?>
 

@@ -1,4 +1,5 @@
 <?php
+
 // backend/consent.php — first-login privacy policy / terms-of-use consent gate.
 //
 // Bump CONSENT_VERSION whenever the policy text in pages/privacy.php changes
@@ -13,7 +14,8 @@ const CONSENT_VERSION = '2026-06-23';
 // can see); only used once $_SESSION['USER'] exists.
 // Result is cached in the session so most page loads don't touch the DB --
 // record_consent() below keeps that cache in sync.
-function user_has_consented(): bool {
+function user_has_consented(): bool
+{
     if (!isset($_SESSION['USER'])) {
         return true;
     }
@@ -37,7 +39,8 @@ function user_has_consented(): bool {
 
 // Records acceptance of the current policy version for the given user --
 // DB is the source of truth, session is just a fast-path cache.
-function record_consent(int $user_id): void {
+function record_consent(int $user_id): void
+{
     global $dbh;
     $stmt = $dbh->prepare("UPDATE users SET consent_accepted_at = NOW(), consent_version = ? WHERE user_id = ?");
     $stmt->execute([CONSENT_VERSION, $user_id]);

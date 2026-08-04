@@ -17,7 +17,7 @@ $role = $_SESSION['role'] ?? 'guest';
 </head>
 <body>
 
-<?php if (should_prompt_german()): ?>
+<?php if (should_prompt_german()) : ?>
 <div class="lang-popup" id="lang-popup">
     <span><?= htmlspecialchars(t('lang.popup_question')) ?></span>
     <a class="lang-popup-btn lang-popup-yes" href="<?= htmlspecialchars(lang_switch_url('de')) ?>"><?= htmlspecialchars(t('lang.popup_yes')) ?></a>
@@ -33,11 +33,11 @@ $role = $_SESSION['role'] ?? 'guest';
 
 <header>
     <ul>
-        <?php if ($role === 'admin'): ?>
+        <?php if ($role === 'admin') : ?>
             <li><a href="<?= BASE_URL ?>/admin"><?= htmlspecialchars(t('nav.admin_panel')) ?></a></li>
         <?php endif; ?>
 
-        <?php if ($role !== 'guest' && $role !== null): ?>
+        <?php if ($role !== 'guest' && $role !== null) : ?>
             <li><a href="<?= BASE_URL ?>/projects"><?= htmlspecialchars(t('nav.projects')) ?> (<?= htmlspecialchars($_SESSION['USER']['username']) ?>)</a></li>
         <?php endif; ?>
 
@@ -48,9 +48,9 @@ $role = $_SESSION['role'] ?? 'guest';
             </li>
         </div>
 
-        <?php if ($role !== 'guest' && $role !== null): ?>
+        <?php if ($role !== 'guest' && $role !== null) : ?>
             <li><a href="<?= BASE_URL ?>/logout"><?= htmlspecialchars(t('nav.logout')) ?> (<?= htmlspecialchars($_SESSION['USER']['username']) ?>)</a></li>
-        <?php else: ?>
+        <?php else : ?>
             <li><a href="<?= BASE_URL ?>/login"><?= htmlspecialchars(t('nav.login')) ?></a></li>
         <?php endif; ?>
     </ul>

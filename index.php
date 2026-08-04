@@ -69,7 +69,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         echo json_encode(['success' => true, 'prediction_id' => $prediction['id']]);
-
     } catch (Exception $e) {
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => $e->getMessage()]);
@@ -238,7 +237,7 @@ require_once __DIR__ . '/templates/header.php';
 
     <div class="storyboard-section">
 
-        <?php if ($active_project_id): ?>
+        <?php if ($active_project_id) : ?>
         <p style="display:flex; align-items:center; justify-content:space-between; gap:16px; font-size:0.8rem; color:var(--muted); margin-bottom:12px;">
             <span><?= htmlspecialchars(t('storyboard.project_label')) ?> <strong><?= htmlspecialchars($active_project_name) ?></strong></span>
             <a class="page-nav-btn" href="<?= BASE_URL ?>/projects"><?= htmlspecialchars(t('storyboard.back_to_projects')) ?></a>
@@ -250,25 +249,25 @@ require_once __DIR__ . '/templates/header.php';
         // the "+ Add Page" control is always reachable. Prev/page-indicator/
         // Next only render once there's more than one page. Reused above and
         // below the panel list.
-        if ($active_project_id):
+        if ($active_project_id) :
             $prev_url     = BASE_URL . '/?project_id=' . $active_project_id . '&page=' . ($current_page - 1);
             $next_url     = BASE_URL . '/?project_id=' . $active_project_id . '&page=' . ($current_page + 1);
             $add_page_url = BASE_URL . '/?project_id=' . $active_project_id . '&page=' . ($total_pages + 1);
             ob_start();
-        ?>
+            ?>
         <div class="storyboard-pagination">
-            <?php if ($total_pages > 1): ?>
-                <?php if ($current_page > 1): ?>
+            <?php if ($total_pages > 1) : ?>
+                <?php if ($current_page > 1) : ?>
                     <a class="page-nav-btn" href="<?= htmlspecialchars($prev_url) ?>"><?= htmlspecialchars(t('storyboard.prev')) ?></a>
-                <?php else: ?>
+                <?php else : ?>
                     <span class="page-nav-btn disabled"><?= htmlspecialchars(t('storyboard.prev')) ?></span>
                 <?php endif; ?>
 
                 <span class="page-indicator"><?= htmlspecialchars(t('storyboard.page_of', ['current' => $current_page, 'total' => $total_pages])) ?></span>
 
-                <?php if ($current_page < $total_pages): ?>
+                <?php if ($current_page < $total_pages) : ?>
                     <a class="page-nav-btn" href="<?= htmlspecialchars($next_url) ?>"><?= htmlspecialchars(t('storyboard.next')) ?></a>
-                <?php else: ?>
+                <?php else : ?>
                     <span class="page-nav-btn disabled"><?= htmlspecialchars(t('storyboard.next')) ?></span>
                 <?php endif; ?>
             <?php endif; ?>
@@ -278,7 +277,7 @@ require_once __DIR__ . '/templates/header.php';
                  panels are saved. -->
             <a class="page-nav-btn" href="<?= htmlspecialchars($add_page_url) ?>"><?= htmlspecialchars(t('storyboard.add_page')) ?></a>
         </div>
-        <?php
+            <?php
             $pagination_nav_html = ob_get_clean();
             echo $pagination_nav_html;
             echo '<p class="pagination-save-hint">' . htmlspecialchars(t('storyboard.save_hint')) . '</p>';
@@ -296,7 +295,7 @@ require_once __DIR__ . '/templates/header.php';
         </div>
 
         <div class="storyboard">
-            <?php for ($i = 1; $i <= 8; $i++):
+            <?php for ($i = 1; $i <= 8; $i++) :
                 // Page-relative slot $i maps to absolute shot_number $page_offset + $i,
                 // so page 2 slot 1 is shot 9, page 3 slot 1 is shot 17, etc.
                 $shot_number = $page_offset + $i;
@@ -309,7 +308,7 @@ require_once __DIR__ . '/templates/header.php';
                 $prompt_val = htmlspecialchars($p->prompt ?? '');
                 $notes_val  = htmlspecialchars($p->notes  ?? '');
                 $panel_id   = $p->panel_id ?? null;
-            ?>
+                ?>
             <div class="panel" id="panel<?= $i ?>"
                  data-panel-id="<?= $panel_id ?? '' ?>">
 
@@ -356,7 +355,9 @@ require_once __DIR__ . '/templates/header.php';
             <?php endfor; ?>
         </div>
 
-        <?php if (!empty($pagination_nav_html)) echo $pagination_nav_html; ?>
+        <?php if (!empty($pagination_nav_html)) {
+            echo $pagination_nav_html;
+        } ?>
 
         <div class="buttons-card">
             <button type="button" id="export-png-btn"><?= htmlspecialchars(t('storyboard.export_png')) ?></button>
