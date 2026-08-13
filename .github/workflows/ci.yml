@@ -46,7 +46,7 @@ jobs:
         with:
           php-version: "8.3"
           extensions: gd, pdo_pgsql, pgsql, mbstring, xml
-          coverage: none
+          coverage: pcov
 
       - name: Cache Composer dependencies
         uses: actions/cache@v4
@@ -59,7 +59,14 @@ jobs:
         run: composer install --prefer-dist --no-progress
 
       - name: Run PHPUnit
-        run: vendor/bin/phpunit
+        run: vendor/bin/phpunit --coverage-clover=coverage.xml
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: coverage-report
+          path: coverage.xml
+          retention-days: 1
 
   sonar:
     name: SonarCloud Quality Gate
