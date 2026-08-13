@@ -38,9 +38,7 @@ Commit hashes are short-SHA, from `inksync_v3`'s `main` history.
 - 16 requirements tracked (11 FR, 5 NFR).
 - 6 have automated PHPUnit coverage (FR-1, FR-3, FR-9, FR-10, NFR-1 partial, NFR-4 via
   the pipeline itself).
-- 10 are manually-verified-only or flagged as unverified - expected for a retrofit onto
-  a solo student project with no test-first discipline at the time. Listed explicitly
-  rather than implied as covered.
+- 10 are manually-verified-only or flagged as unverified.
 
 ---
 Related: [requirements.md](./requirements.md)
