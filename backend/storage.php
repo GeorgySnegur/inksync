@@ -9,6 +9,9 @@
 // Absolute path to the storage root (used internally — never sent to clients)
 define('STORAGE_ROOT', __DIR__ . '/../storage/panels');
 
+// Relative path prefix as stored in the DB and served via BASE_URL
+define('PANEL_STORAGE_PATH', '/storage/panels/');
+
 
 // Download a Replicate output image, compress it to JPEG, and save it locally.
 // Returns the relative path suitable for storing in the DB and serving via BASE_URL.
@@ -56,7 +59,7 @@ function download_and_store_image(string $replicate_url, int $user_id): string
     }
 
     // 6. Return the relative path (no hostname) so it works on both localhost and the uni server
-    return '/storage/panels/' . $user_id . '/' . $filename;
+    return PANEL_STORAGE_PATH . $user_id . '/' . $filename;
 }
 
 
@@ -113,7 +116,7 @@ function store_uploaded_image(string $tmp_path, int $user_id): string
         throw new Exception("Could not write image to disk.");
     }
 
-    return '/storage/panels/' . $user_id . '/' . $filename;
+    return PANEL_STORAGE_PATH . $user_id . '/' . $filename;
 }
 
 
@@ -128,7 +131,7 @@ function delete_panel_image(?string $relative_path): void
     }
 
     // Only delete files that live inside our own storage directory
-    if (!str_starts_with($relative_path, '/storage/panels/')) {
+    if (!str_starts_with($relative_path, PANEL_STORAGE_PATH)) {
         return;
     }
 
