@@ -53,4 +53,29 @@ final class StorageTest extends TestCase
         delete_panel_image('/storage/panels/__phpunit_test__/../../../composer.json');
         $this->assertFileExists($target, 'a path escaping STORAGE_ROOT must never be deleted');
     }
+
+    /**
+     * save_gd_image_and_build_relative_path() is the logic shared by
+     * download_and_store_image() (needs a live Replicate call) and
+     * store_uploaded_image() (needs a real uploaded file) -- pulled out so
+     * the actual save-and-path-build behavior is testable with just a plain
+     * GD image resource, no network or upload required.
+     */
+    public function testSaveGdImageAndBuildRelativePathSavesFileAndReturnsExpectedPath(): void
+    {
+        $userId = 999999; // fake id, distinct from the delete-test's __phpunit_test__ dir
+        $dir    = STORAGE_ROOT . '/' . $userId;
+
+        $image        = imagecreatetruecolor(2, 2);
+        $relativePath = save_gd_image_and_build_relative_path($image, $userId);
+
+        $this->assertStringStartsWith(PANEL_STORAGE_PATH . $userId . '/', $relativePath);
+        $this->assertStringEndsWith('.jpg', $relativePath);
+
+        $absPath = __DIR__ . '/../..' . $relativePath;
+        $this->assertFileExists($absPath, 'the image should actually be written to disk');
+
+        unlink($absPath);
+        rmdir($dir);
+    }
 }

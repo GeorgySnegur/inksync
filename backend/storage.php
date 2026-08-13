@@ -13,6 +13,48 @@ define('STORAGE_ROOT', __DIR__ . '/../storage/panels');
 define('PANEL_STORAGE_PATH', '/storage/panels/');
 
 
+// Shared by download_and_store_image() and store_uploaded_image(): create the
+// per-user storage dir if needed, save the given GD image resource as a JPEG
+// under a collision-free filename, and return the DB-relative path.
+//
+// Pulled out on its own so it's unit-testable without a network call
+// (download_and_store_image) or a real uploaded file (store_uploaded_image) —
+// both of those just need to hand it a decoded GD image resource.
+function save_gd_image_and_build_relative_path($image, int $user_id): string
+{
+    // Create the per-user storage directory if it doesn't exist yet.
+    // Mode 0775 (not 0755) so the web server's group also gets write access —
+    // on shared hosting the PHP process and the file owner are often different
+    // users that only share a group.
+    $dir = STORAGE_ROOT . '/' . $user_id;
+    if (!is_dir($dir)) {
+        if (!mkdir($dir, 0775, true) && !is_dir($dir)) {
+            throw new Exception("Could not create storage directory: $dir (check filesystem permissions on STORAGE_ROOT = " . STORAGE_ROOT . ")");
+        }
+    }
+    if (!is_writable($dir)) {
+        throw new Exception("Storage directory is not writable: $dir (check file permissions / ownership on the server)");
+    }
+
+    // Generate a collision-free filename — never derived from user input (no path traversal)
+    $uuid     = bin2hex(random_bytes(16));
+    $filename = $uuid . '.jpg';
+    $abs_path = $dir . '/' . $filename;
+
+    // Save as JPEG at quality 85.
+    // 85 is the sweet spot: visually lossless vs the AI-generated PNG,
+    // but ~3-5x smaller file size.
+    $saved = imagejpeg($image, $abs_path, 85);
+    imagedestroy($image);
+
+    if (!$saved) {
+        throw new Exception("Could not write image to disk at $abs_path (imagejpeg() returned false — likely a permissions or disk-space issue)");
+    }
+
+    // Return the relative path (no hostname) so it works on both localhost and the uni server
+    return PANEL_STORAGE_PATH . $user_id . '/' . $filename;
+}
+
 // Download a Replicate output image, compress it to JPEG, and save it locally.
 // Returns the relative path suitable for storing in the DB and serving via BASE_URL.
 function download_and_store_image(string $replicate_url, int $user_id): string
@@ -29,37 +71,8 @@ function download_and_store_image(string $replicate_url, int $user_id): string
         throw new Exception("Could not decode generated image.");
     }
 
-    // 3. Create the per-user storage directory if it doesn't exist yet.
-    //    Mode 0775 (not 0755) so the web server's group also gets write access —
-    //    on shared hosting the PHP process and the file owner are often different
-    //    users that only share a group.
-    $dir = STORAGE_ROOT . '/' . $user_id;
-    if (!is_dir($dir)) {
-        if (!mkdir($dir, 0775, true) && !is_dir($dir)) {
-            throw new Exception("Could not create storage directory: $dir (check filesystem permissions on STORAGE_ROOT = " . STORAGE_ROOT . ")");
-        }
-    }
-    if (!is_writable($dir)) {
-        throw new Exception("Storage directory is not writable: $dir (check file permissions / ownership on the server)");
-    }
-
-    // 4. Generate a collision-free filename — never derived from user input (no path traversal)
-    $uuid     = bin2hex(random_bytes(16));
-    $filename = $uuid . '.jpg';
-    $abs_path = $dir . '/' . $filename;
-
-    // 5. Save as JPEG at quality 85.
-    //    85 is the sweet spot: visually lossless vs the AI-generated PNG,
-    //    but ~3-5x smaller file size.
-    $saved = imagejpeg($image, $abs_path, 85);
-    imagedestroy($image);
-
-    if (!$saved) {
-        throw new Exception("Could not write image to disk at $abs_path (imagejpeg() returned false — likely a permissions or disk-space issue)");
-    }
-
-    // 6. Return the relative path (no hostname) so it works on both localhost and the uni server
-    return PANEL_STORAGE_PATH . $user_id . '/' . $filename;
+    // 3. Save it and build the DB-relative path (shared with store_uploaded_image())
+    return save_gd_image_and_build_relative_path($image, $user_id);
 }
 
 
@@ -91,32 +104,8 @@ function store_uploaded_image(string $tmp_path, int $user_id): string
         throw new Exception("Could not decode uploaded image.");
     }
 
-    // 3. Create the per-user storage directory if it doesn't exist yet (see
-    //    the note in download_and_store_image() above re: 0775 vs 0755)
-    $dir = STORAGE_ROOT . '/' . $user_id;
-    if (!is_dir($dir)) {
-        if (!mkdir($dir, 0775, true) && !is_dir($dir)) {
-            throw new Exception("Could not create storage directory: $dir");
-        }
-    }
-    if (!is_writable($dir)) {
-        throw new Exception("Storage directory is not writable: $dir");
-    }
-
-    // 4. Generate a collision-free filename — never derived from user input (no path traversal)
-    $uuid     = bin2hex(random_bytes(16));
-    $filename = $uuid . '.jpg';
-    $abs_path = $dir . '/' . $filename;
-
-    // 5. Save as JPEG at quality 85, same as generated panel images
-    $saved = imagejpeg($image, $abs_path, 85);
-    imagedestroy($image);
-
-    if (!$saved) {
-        throw new Exception("Could not write image to disk.");
-    }
-
-    return PANEL_STORAGE_PATH . $user_id . '/' . $filename;
+    // 3. Save it and build the DB-relative path (shared with download_and_store_image())
+    return save_gd_image_and_build_relative_path($image, $user_id);
 }
 
 
