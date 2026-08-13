@@ -6,11 +6,16 @@
 // DB stores the relative path (e.g. /storage/panels/2/abc123.jpg)
 // so it survives the localhost <-> uni-server hostname switch.
 
+// @codeCoverageIgnoreStart
+// Top-level constant declarations — always executed once at include time,
+// never meaningfully "uncovered" or "covered" by a specific test.
+
 // Absolute path to the storage root (used internally — never sent to clients)
 define('STORAGE_ROOT', __DIR__ . '/../storage/panels');
 
 // Relative path prefix as stored in the DB and served via BASE_URL
 define('PANEL_STORAGE_PATH', '/storage/panels/');
+// @codeCoverageIgnoreEnd
 
 
 // Shared by download_and_store_image() and store_uploaded_image(): create the
@@ -29,11 +34,16 @@ function save_gd_image_and_build_relative_path($image, int $user_id): string
     $dir = STORAGE_ROOT . '/' . $user_id;
     if (!is_dir($dir)) {
         if (!mkdir($dir, 0775, true) && !is_dir($dir)) {
+            // @codeCoverageIgnoreStart
+            // Filesystem-failure guard — not realistically triggerable in a unit test.
             throw new Exception("Could not create storage directory: $dir (check filesystem permissions on STORAGE_ROOT = " . STORAGE_ROOT . ")");
+            // @codeCoverageIgnoreEnd
         }
     }
     if (!is_writable($dir)) {
+        // @codeCoverageIgnoreStart
         throw new Exception("Storage directory is not writable: $dir (check file permissions / ownership on the server)");
+        // @codeCoverageIgnoreEnd
     }
 
     // Generate a collision-free filename — never derived from user input (no path traversal)
@@ -48,7 +58,9 @@ function save_gd_image_and_build_relative_path($image, int $user_id): string
     imagedestroy($image);
 
     if (!$saved) {
+        // @codeCoverageIgnoreStart
         throw new Exception("Could not write image to disk at $abs_path (imagejpeg() returned false — likely a permissions or disk-space issue)");
+        // @codeCoverageIgnoreEnd
     }
 
     // Return the relative path (no hostname) so it works on both localhost and the uni server
